@@ -7,7 +7,7 @@ import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
 
 import java.util.List;
 
-public interface FacadeService {
+public interface ScoringFacadeService {
     List<LoanOfferDTO> createListOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);
     CreditDTO scoring(ScoringDataDTO scoringDataDTO);
 }
