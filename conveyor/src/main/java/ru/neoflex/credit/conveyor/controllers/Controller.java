@@ -1,5 +1,6 @@
 package ru.neoflex.credit.conveyor.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,25 +15,20 @@ import ru.neoflex.credit.conveyor.service.abstracts.ScoringService;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 public class Controller implements ConveyorApi {
 
     private final PreScoringService preScoringService;
     private final ScoringService scoringService;
 
-    @Autowired
-    public Controller(PreScoringService preScoringService, ScoringService scoringService) {
-        this.preScoringService = preScoringService;
-        this.scoringService = scoringService;
-    }
-
     @Override
     public ResponseEntity<List<LoanOfferDTO>> createOffers(LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        return new ResponseEntity<>(preScoringService.createListOffers(loanApplicationRequestDTO), HttpStatus.OK);
+        return ResponseEntity.ok(preScoringService.createListOffers(loanApplicationRequestDTO));
     }
 
     @Override
     public ResponseEntity<CreditDTO> scoring(ScoringDataDTO scoringDataDTO) {
-        return new ResponseEntity<>(scoringService.scoring(scoringDataDTO), HttpStatus.OK);
+        return ResponseEntity.ok(scoringService.scoring(scoringDataDTO));
     }
 }
