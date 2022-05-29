@@ -25,6 +25,10 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     private final String BASE_INSURANCE;
     @Value("${properties.percentageInsurance}")
     private final String PERCENTAGE_INSURANCE;
+    @Value("${properties.rateDiscountSalaryClient}")
+    private final String RATE_DISCOUNT_SALARY_CLIENT;
+    @Value("${properties.rateDiscountInsuranceEnabled}")
+    private final String RATE_DISCOUNT_INSURANCE_ENABLED;
 
     @Override
     public BigDecimal calculateTotalAmount(BigDecimal amount, boolean isInsuranceEnabled) {
@@ -38,7 +42,15 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
     @Override
     public BigDecimal calculateRate(boolean isInsuranceEnabled, boolean isSalaryClient) {
-        return null;
+        BigDecimal currentRate = new BigDecimal(CURRENT_RATE.toString());
+        if (isInsuranceEnabled) {
+            currentRate.subtract(new BigDecimal(RATE_DISCOUNT_INSURANCE_ENABLED));
+        }
+        if (isSalaryClient) {
+            currentRate.subtract(new BigDecimal(RATE_DISCOUNT_SALARY_CLIENT));
+        }
+        CURRENT_RATE = currentRate;
+        return currentRate;
     }
 
     @Override

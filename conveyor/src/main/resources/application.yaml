@@ -4,3 +4,5 @@ properties:
   baseRate: 11
   baseInsurance: 10000
   percentageInsurance: 0.1
+  rateDiscountSalaryClient: 1
+  rateDiscountInsuranceEnabled: 2
