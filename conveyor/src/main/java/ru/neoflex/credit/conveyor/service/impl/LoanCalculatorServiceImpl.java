@@ -9,6 +9,7 @@ import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
 import ru.neoflex.credit.conveyor.service.abstracts.LoanCalculatorService;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Calendar;
@@ -20,10 +21,19 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     @Value("${properties.baseRate}")
     private final String BASE_RATE;
     private BigDecimal CURRENT_RATE = new BigDecimal(BASE_RATE);
+    @Value("${properties.baseInsurance}")
+    private final String BASE_INSURANCE;
+    @Value("${properties.percentageInsurance}")
+    private final String PERCENTAGE_INSURANCE;
 
     @Override
-    public BigDecimal calculateTotalAmount(BigDecimal requestedAmount, boolean isInsuranceEnabled) {
-        return null;
+    public BigDecimal calculateTotalAmount(BigDecimal amount, boolean isInsuranceEnabled) {
+        if (isInsuranceEnabled) {
+            BigDecimal insuranceCost = new BigDecimal(BigInteger.ZERO);
+            insuranceCost.add(amount.multiply(new BigDecimal(PERCENTAGE_INSURANCE)));
+            amount.add(insuranceCost);
+        }
+        return amount;
     }
 
     @Override
