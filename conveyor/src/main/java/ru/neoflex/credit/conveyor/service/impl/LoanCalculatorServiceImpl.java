@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Calendar;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +51,21 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         return currentRate;
     }
 
+    /*
+    * Ежемесячный платеж = Коэффициент аннуитета * Сумма кредита
+    * Коэффициент = (i * (1 + i)^n) / ((1 + i)^n - 1)
+    * i - процентная ставка по кредиту в месяц
+    * i = годовая ставка / 12 месяцев
+    * n - количество месяцев, за которые нужно погасить кредит
+    **/
     @Override
     public BigDecimal calculateMonthlyPayment(BigDecimal totalAmount, Integer term, BigDecimal rate) {
-        return null;
+        BigDecimal rateMonthly = rate.divide(BigDecimal.valueOf(12));
+    //  intermediateNumber = (1 + i)^n
+        BigDecimal intermediateNumber = rateMonthly.add(BigDecimal.ONE).pow(term);
+        BigDecimal numerator = intermediateNumber.multiply(rateMonthly);
+        BigDecimal denominator = intermediateNumber.subtract(BigDecimal.ONE);
+        return numerator.divide(denominator).multiply(totalAmount);
     }
 
     @Override
