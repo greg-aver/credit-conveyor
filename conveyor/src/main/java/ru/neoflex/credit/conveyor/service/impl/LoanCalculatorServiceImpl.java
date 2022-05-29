@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
 import ru.neoflex.credit.conveyor.model.EmploymentDTO;
+import ru.neoflex.credit.conveyor.model.PaymentScheduleElement;
 import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
 import ru.neoflex.credit.conveyor.service.abstracts.LoanCalculatorService;
+import ru.neoflex.credit.conveyor.service.abstracts.factory.FactoryPaymentScheduleElement;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     @Value("${properties.rateDiscountInsuranceEnabled}")
     private final String RATE_DISCOUNT_INSURANCE_ENABLED;
 
+    private final FactoryPaymentScheduleElement factoryPayment;
     @Override
     public BigDecimal calculateTotalAmount(BigDecimal amount, boolean isInsuranceEnabled) {
         if (isInsuranceEnabled) {
@@ -69,8 +74,46 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     }
 
     @Override
-    public CreditDTO calculateCredit(ScoringDataDTO data) {
-        return null;
+    public CreditDTO calculateCredit(ScoringDataDTO scoringData) {
+        //??
+        scoring(scoringData);
+        BigDecimal requestedAmount = scoringData.getAmount();
+        boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();
+        boolean isSalaryClient = scoringData.getIsSalaryClient();
+        BigDecimal totalAmount = calculateTotalAmount(requestedAmount, isInsuranceEnabled);
+        Integer term = scoringData.getTerm();
+        BigDecimal rate = calculateRate(isInsuranceEnabled, isSalaryClient);
+        BigDecimal monthlyPayment = calculateMonthlyPayment(totalAmount,term,rate);
+        List<PaymentScheduleElement> paymentScheduleElementList = calculateListPaymentSchedule(totalAmount, term, monthlyPayment, rate);
+
+        return new CreditDTO()
+                .amount(totalAmount)
+                .term(term)
+                .monthlyPayment(monthlyPayment)
+                .rate(rate)
+                .psk()
+                .isInsuranceEnabled(isInsuranceEnabled)
+                .isSalaryClient(isSalaryClient)
+                .paymentSchedule(paymentScheduleElementList);
+    }
+
+    private List<PaymentScheduleElement> calculateListPaymentSchedule(
+            BigDecimal totalAmount, Integer term, BigDecimal monthlyPayment, BigDecimal rate
+    ) {
+        ArrayList<PaymentScheduleElement> resultList = new ArrayList<>();
+        LocalDate datePayment = LocalDate.now();
+        for (int i = 0; i < term + 1; i++) {
+
+            factoryPayment.createPaymentScheduleElement(
+
+            )
+            datePayment.plusMonths(1L);
+        }
+        return resultList;
+    }
+
+    private BigDecimal calculatePSK() {
+
     }
 
     /* Правила скоринга:
@@ -83,8 +126,8 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     6. Возраст менее 20 или более 60 лет → отказ
     7. Пол: Женщина, возраст от 35 до 60 лет → ставка уменьшается на 3; Мужчина, возраст от 30 до 55 лет → ставка уменьшается на 3; Не бинарный → ставка увеличивается на 3
     8. Стаж работы: Общий стаж менее 12 месяцев → отказ; Текущий стаж менее 3 месяцев → отказ */
-    boolean scoring(ScoringDataDTO data) {
-        EmploymentDTO employment = data.getEmployment();
+    boolean scoring(ScoringDataDTO scoringData) {
+        EmploymentDTO employment = scoringData.getEmployment();
         boolean scoring = true;
         BigDecimal currentRate = new BigDecimal(BASE_RATE);
 
@@ -109,10 +152,10 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
                 break;
         }
 
-        int clientAge = Period.between(data.getBirthdate(), LocalDate.now()).getYears();
+        int clientAge = Period.between(scoringData.getBirthdate(), LocalDate.now()).getYears();
 
         if (
-            data.getAmount()
+            scoringData.getAmount()
                     .compareTo(employment.getSalary().multiply(BigDecimal.valueOf(20))) > 0
                 && clientAge < 20
                 && clientAge > 60
@@ -122,7 +165,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
             scoring = false;
         }
 
-        switch (data.getGender()) {
+        switch (scoringData.getGender()) {
             case NON_BINARY:
                 currentRate.add(BigDecimal.valueOf(3));
                 break;
@@ -138,7 +181,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
                 break;
         }
 
-        switch (data.getMaritalStatus()) {
+        switch (scoringData.getMaritalStatus()) {
             case MARRIED:
                 currentRate.subtract(BigDecimal.valueOf(3));
                 break;
@@ -146,7 +189,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
                 currentRate.add(BigDecimal.ONE);
         }
 
-        if (data.getDependentAmount() > 1) {
+        if (scoringData.getDependentAmount() > 1) {
             currentRate.add(BigDecimal.ONE);
         }
 
