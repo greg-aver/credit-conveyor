@@ -3,6 +3,7 @@ package ru.neoflex.credit.conveyor.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.conveyor.exception.ScoringException;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
 import ru.neoflex.credit.conveyor.model.EmploymentDTO;
 import ru.neoflex.credit.conveyor.model.PaymentScheduleElement;
@@ -15,6 +16,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -126,14 +128,14 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     6. Возраст менее 20 или более 60 лет → отказ
     7. Пол: Женщина, возраст от 35 до 60 лет → ставка уменьшается на 3; Мужчина, возраст от 30 до 55 лет → ставка уменьшается на 3; Не бинарный → ставка увеличивается на 3
     8. Стаж работы: Общий стаж менее 12 месяцев → отказ; Текущий стаж менее 3 месяцев → отказ */
-    boolean scoring(ScoringDataDTO scoringData) {
+    private void scoring(ScoringDataDTO scoringData) {
         EmploymentDTO employment = scoringData.getEmployment();
-        boolean scoring = true;
+        ArrayList<String> reasonsRefusal = new ArrayList<>();
         BigDecimal currentRate = new BigDecimal(BASE_RATE);
 
         switch (employment.getEmploymentStatus()) {
             case UNEMPLOYED:
-                scoring = false;
+                reasonsRefusal.add("Denied a loan: Client unemployed");
                 break;
             case SELF_EMPLOYED:
                 currentRate.add(BigDecimal.ONE);
@@ -154,15 +156,25 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
         int clientAge = Period.between(scoringData.getBirthdate(), LocalDate.now()).getYears();
 
-        if (
-            scoringData.getAmount()
-                    .compareTo(employment.getSalary().multiply(BigDecimal.valueOf(20))) > 0
-                && clientAge < 20
-                && clientAge > 60
-                && employment.getWorkExperienceTotal() < 12
-                && employment.getWorkExperienceCurrent() < 3
-        ) {
-            scoring = false;
+        if (scoringData.getAmount()
+                .compareTo(employment.getSalary().multiply(BigDecimal.valueOf(20))) > 0) {
+            reasonsRefusal.add("Denied a loan: The requested loan exceeds 20 salaries");
+        }
+
+        if (clientAge < 20) {
+            reasonsRefusal.add("Denied a loan: Client under 20");
+        }
+
+        if (clientAge > 60) {
+            reasonsRefusal.add("Denied a loan: Client over 60");
+        }
+
+        if (employment.getWorkExperienceTotal() < 12) {
+            reasonsRefusal.add("Denied a loan: Total work experience less than 1 year");
+        }
+
+        if (employment.getWorkExperienceCurrent() < 3) {
+            reasonsRefusal.add("Denied a loan: At least 3 months work experience in current position");
         }
 
         switch (scoringData.getGender()) {
@@ -194,6 +206,9 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         }
 
         CURRENT_RATE = currentRate;
-        return scoring;
+
+        if(reasonsRefusal.size() > 0) {
+            throw new ScoringException(Arrays.deepToString(reasonsRefusal.toArray()));
+        }
     }
 }
