@@ -77,7 +77,6 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
     @Override
     public CreditDTO calculateCredit(ScoringDataDTO scoringData) {
-        //??
         scoring(scoringData);
         BigDecimal requestedAmount = scoringData.getAmount();
         boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();
