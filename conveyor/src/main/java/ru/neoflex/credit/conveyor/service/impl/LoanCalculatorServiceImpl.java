@@ -1,6 +1,7 @@
 package ru.neoflex.credit.conveyor.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.neoflex.credit.conveyor.exception.ScoringException;
@@ -18,7 +19,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoanCalculatorServiceImpl implements LoanCalculatorService {
@@ -169,24 +170,30 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         ArrayList<String> reasonsRefusal = new ArrayList<>();
         BigDecimal currentRate = new BigDecimal(BASE_RATE);
 
+        log.info("Scoring start");
+
         switch (employment.getEmploymentStatus()) {
             case UNEMPLOYED:
                 reasonsRefusal.add("Denied a loan: Client unemployed");
                 break;
             case SELF_EMPLOYED:
                 currentRate.add(BigDecimal.ONE);
+                log.info("Client is self employed. Rate increased by 1");
                 break;
             case BUSINESS_OWNER:
                 currentRate.add(BigDecimal.valueOf(3));
+                log.info("Client is business owner. Rate increased by 3");
                 break;
         }
 
         switch (employment.getPosition()) {
             case MID_MANAGER:
                 currentRate.subtract(BigDecimal.valueOf(2));
+                log.info("Client is middle manager. Rate reduced by 3");
                 break;
             case TOP_MANAGER:
                 currentRate.subtract(BigDecimal.valueOf(4));
+                log.info("Client is top manager. Rate reduced by 4");
                 break;
         }
 
@@ -216,15 +223,18 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         switch (scoringData.getGender()) {
             case NON_BINARY:
                 currentRate.add(BigDecimal.valueOf(3));
+                log.info("The client has a non-binary gender. Rate increased by 3");
                 break;
             case MALE:
                 if (clientAge >= 30 && clientAge <= 55) {
                     currentRate.subtract(BigDecimal.valueOf(3));
+                    log.info("The client is male and between 30 and 55 years of age. Rate reduced 3");
                 }
                 break;
             case FEMALE:
                 if (clientAge >= 35 && clientAge <= 60) {
                     currentRate.subtract(BigDecimal.valueOf(3));
+                    log.info("The client is female and between 35 and 60 years of age. Rate reduced 3");
                 }
                 break;
         }
@@ -232,9 +242,12 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         switch (scoringData.getMaritalStatus()) {
             case MARRIED:
                 currentRate.subtract(BigDecimal.valueOf(3));
+                log.info("The client is married. Rate reduced 3");
                 break;
             case DIVORCED:
                 currentRate.add(BigDecimal.ONE);
+                log.info("The client is divorced. Rate increased 1");
+                break;
         }
 
         if (scoringData.getDependentAmount() > 1) {
@@ -243,8 +256,13 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
         CURRENT_RATE = currentRate;
 
-        if(reasonsRefusal.size() > 0) {
-            throw new ScoringException(Arrays.deepToString(reasonsRefusal.toArray()));
+        log.info("End process scoring. Client: {} {}", scoringData.getFirstName(), scoringData.getLastName());
+
+        if (reasonsRefusal.size() > 0) {
+            String problems = Arrays.deepToString(reasonsRefusal.toArray());
+            log.info("Denied a loan {}", problems);
+            throw new ScoringException(problems);
         }
+
     }
 }
