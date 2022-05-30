@@ -48,14 +48,21 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
     @Override
     public BigDecimal calculateRate(boolean isInsuranceEnabled, boolean isSalaryClient) {
+        log.info("Start calculate rate");
+
         BigDecimal currentRate = new BigDecimal(CURRENT_RATE.toString());
+        log.info("currentRate = {}", currentRate);
+
         if (isInsuranceEnabled) {
             currentRate.subtract(new BigDecimal(RATE_DISCOUNT_INSURANCE_ENABLED));
+            log.info("Insurance enabled. Rate downgrade by {}", RATE_DISCOUNT_INSURANCE_ENABLED);
         }
         if (isSalaryClient) {
             currentRate.subtract(new BigDecimal(RATE_DISCOUNT_SALARY_CLIENT));
+            log.info("isSalaryClient = true. Rate downgrade by {}", RATE_DISCOUNT_SALARY_CLIENT);
         }
         CURRENT_RATE = currentRate;
+        log.info("End calculate current rate. Rate = {}", currentRate);
         return currentRate;
     }
 
@@ -68,12 +75,25 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     **/
     @Override
     public BigDecimal calculateMonthlyPayment(BigDecimal totalAmount, Integer term, BigDecimal rate) {
+        log.info("Start calculate monthly payment");
+
         BigDecimal rateMonthly = rate.divide(BigDecimal.valueOf(12));
+        log.info("rateMonthly = {}", rateMonthly);
+
     //  intermediateNumber = (1 + i)^n
         BigDecimal intermediateNumber = rateMonthly.add(BigDecimal.ONE).pow(term);
+        log.info("intermediateNumber = {}", intermediateNumber);
+
         BigDecimal numerator = intermediateNumber.multiply(rateMonthly);
+        log.info("numerator = {}", numerator);
+
         BigDecimal denominator = intermediateNumber.subtract(BigDecimal.ONE);
-        return numerator.divide(denominator).multiply(totalAmount);
+        log.info("denominator = {}", denominator);
+
+        BigDecimal result = numerator.divide(denominator).multiply(totalAmount);
+        log.info("End calculate monthly payment. Result = {}", result);
+
+        return result;
     }
 
     @Override
@@ -129,23 +149,28 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     private BigDecimal calculatePSK(
             BigDecimal requestedAmount, Integer term, List<PaymentScheduleElement> paymentSchedule
     ) {
+        log.info("Start calculate PSK");
+
         BigDecimal termYears = new BigDecimal(term)
                 .divide(BigDecimal.valueOf(12))
                 .setScale(2);
+        log.info("termYears = {}", termYears);
 
         BigDecimal paymentAmount = paymentSchedule
                 .stream()
                 .map(PaymentScheduleElement::getTotalPayment)
                 .reduce(BigDecimal::add).orElse(BigDecimal.ONE);
+        log.info("Payment amount = {}", paymentAmount);
 
         BigDecimal numerator = paymentAmount.divide(requestedAmount)
                 .subtract(BigDecimal.ONE);
-
-        return numerator
+        BigDecimal psk = numerator
                 .divide(termYears)
                 .divide(BigDecimal.valueOf(100))
                 .divide(termYears)
                 .setScale(2);
+        log.info("End calculate psk. PSK = {}", psk);
+        return psk;
     }
 
     private BigDecimal calculateInterestPayment(BigDecimal remainingDebt) {
