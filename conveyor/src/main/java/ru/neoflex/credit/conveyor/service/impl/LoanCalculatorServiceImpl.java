@@ -87,13 +87,13 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         BigDecimal rate = calculateRate(isInsuranceEnabled, isSalaryClient);
         BigDecimal monthlyPayment = calculateMonthlyPayment(totalAmount,term,rate);
         List<PaymentScheduleElement> paymentScheduleElementList = calculateListPaymentSchedule(totalAmount, term, monthlyPayment, rate);
-
+        BigDecimal psk = calculatePSK();
         return new CreditDTO()
                 .amount(totalAmount)
                 .term(term)
                 .monthlyPayment(monthlyPayment)
                 .rate(rate)
-                .psk()
+                .psk(psk)
                 .isInsuranceEnabled(isInsuranceEnabled)
                 .isSalaryClient(isSalaryClient)
                 .paymentSchedule(paymentScheduleElementList);
@@ -104,18 +104,30 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     ) {
         ArrayList<PaymentScheduleElement> resultList = new ArrayList<>();
         LocalDate datePayment = LocalDate.now();
-        for (int i = 0; i < term + 1; i++) {
+        BigDecimal remainingDebt = totalAmount.setScale(2);
 
-            factoryPayment.createPaymentScheduleElement(
+        for (int i = 1; i < term + 1; i++) {
 
-            )
+            BigDecimal interestPayment = calculateInterestPayment(remainingDebt);
+            BigDecimal debtPayment = monthlyPayment.subtract(interestPayment);
             datePayment.plusMonths(1L);
+            remainingDebt = remainingDebt.subtract(debtPayment);
+            factoryPayment.createPaymentScheduleElement(
+                    i, datePayment, monthlyPayment, interestPayment, debtPayment, remainingDebt
+            );
         }
         return resultList;
     }
 
     private BigDecimal calculatePSK() {
+        return null;
+    }
 
+    private BigDecimal calculateInterestPayment(BigDecimal remainingDebt) {
+        BigDecimal rateAbsolute = new BigDecimal("#.##");
+        rateAbsolute.add(CURRENT_RATE)
+                .divide(BigDecimal.valueOf(100));
+        return rateAbsolute.multiply(remainingDebt);
     }
 
     /* Правила скоринга:
