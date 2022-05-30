@@ -1,6 +1,7 @@
 package ru.neoflex.credit.conveyor.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.neoflex.credit.conveyor.exception.ScoringException;
@@ -18,7 +19,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoanCalculatorServiceImpl implements LoanCalculatorService {
@@ -47,14 +48,21 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
     @Override
     public BigDecimal calculateRate(boolean isInsuranceEnabled, boolean isSalaryClient) {
+        log.info("Start calculate rate");
+
         BigDecimal currentRate = new BigDecimal(CURRENT_RATE.toString());
+        log.debug("currentRate = {}", currentRate);
+
         if (isInsuranceEnabled) {
             currentRate.subtract(new BigDecimal(RATE_DISCOUNT_INSURANCE_ENABLED));
+            log.debug("Insurance enabled. Rate downgrade by {}", RATE_DISCOUNT_INSURANCE_ENABLED);
         }
         if (isSalaryClient) {
             currentRate.subtract(new BigDecimal(RATE_DISCOUNT_SALARY_CLIENT));
+            log.debug("isSalaryClient = true. Rate downgrade by {}", RATE_DISCOUNT_SALARY_CLIENT);
         }
         CURRENT_RATE = currentRate;
+        log.info("End calculate current rate. Rate = {}", currentRate);
         return currentRate;
     }
 
@@ -67,12 +75,25 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     **/
     @Override
     public BigDecimal calculateMonthlyPayment(BigDecimal totalAmount, Integer term, BigDecimal rate) {
+        log.info("Start calculate monthly payment");
+
         BigDecimal rateMonthly = rate.divide(BigDecimal.valueOf(12));
+        log.debug("rateMonthly = {}", rateMonthly);
+
     //  intermediateNumber = (1 + i)^n
         BigDecimal intermediateNumber = rateMonthly.add(BigDecimal.ONE).pow(term);
+        log.debug("intermediateNumber = {}", intermediateNumber);
+
         BigDecimal numerator = intermediateNumber.multiply(rateMonthly);
+        log.debug("numerator = {}", numerator);
+
         BigDecimal denominator = intermediateNumber.subtract(BigDecimal.ONE);
-        return numerator.divide(denominator).multiply(totalAmount);
+        log.debug("denominator = {}", denominator);
+
+        BigDecimal result = numerator.divide(denominator).multiply(totalAmount);
+        log.info("End calculate monthly payment. Result = {}", result);
+
+        return result;
     }
 
     @Override
@@ -128,23 +149,28 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     private BigDecimal calculatePSK(
             BigDecimal requestedAmount, Integer term, List<PaymentScheduleElement> paymentSchedule
     ) {
+        log.info("Start calculate PSK");
+
         BigDecimal termYears = new BigDecimal(term)
                 .divide(BigDecimal.valueOf(12))
                 .setScale(2);
+        log.debug("termYears = {}", termYears);
 
         BigDecimal paymentAmount = paymentSchedule
                 .stream()
                 .map(PaymentScheduleElement::getTotalPayment)
                 .reduce(BigDecimal::add).orElse(BigDecimal.ONE);
+        log.debug("Payment amount = {}", paymentAmount);
 
         BigDecimal numerator = paymentAmount.divide(requestedAmount)
                 .subtract(BigDecimal.ONE);
-
-        return numerator
+        BigDecimal psk = numerator
                 .divide(termYears)
                 .divide(BigDecimal.valueOf(100))
                 .divide(termYears)
                 .setScale(2);
+        log.info("End calculate psk. PSK = {}", psk);
+        return psk;
     }
 
     private BigDecimal calculateInterestPayment(BigDecimal remainingDebt) {
@@ -169,24 +195,30 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         ArrayList<String> reasonsRefusal = new ArrayList<>();
         BigDecimal currentRate = new BigDecimal(BASE_RATE);
 
+        log.info("Scoring start");
+
         switch (employment.getEmploymentStatus()) {
             case UNEMPLOYED:
                 reasonsRefusal.add("Denied a loan: Client unemployed");
                 break;
             case SELF_EMPLOYED:
                 currentRate.add(BigDecimal.ONE);
+                log.debug("Client is self employed. Rate increased by 1");
                 break;
             case BUSINESS_OWNER:
                 currentRate.add(BigDecimal.valueOf(3));
+                log.debug("Client is business owner. Rate increased by 3");
                 break;
         }
 
         switch (employment.getPosition()) {
             case MID_MANAGER:
                 currentRate.subtract(BigDecimal.valueOf(2));
+                log.debug("Client is middle manager. Rate reduced by 3");
                 break;
             case TOP_MANAGER:
                 currentRate.subtract(BigDecimal.valueOf(4));
+                log.debug("Client is top manager. Rate reduced by 4");
                 break;
         }
 
@@ -216,15 +248,18 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         switch (scoringData.getGender()) {
             case NON_BINARY:
                 currentRate.add(BigDecimal.valueOf(3));
+                log.debug("The client has a non-binary gender. Rate increased by 3");
                 break;
             case MALE:
                 if (clientAge >= 30 && clientAge <= 55) {
                     currentRate.subtract(BigDecimal.valueOf(3));
+                    log.debug("The client is male and between 30 and 55 years of age. Rate reduced 3");
                 }
                 break;
             case FEMALE:
                 if (clientAge >= 35 && clientAge <= 60) {
                     currentRate.subtract(BigDecimal.valueOf(3));
+                    log.debug("The client is female and between 35 and 60 years of age. Rate reduced 3");
                 }
                 break;
         }
@@ -232,9 +267,12 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         switch (scoringData.getMaritalStatus()) {
             case MARRIED:
                 currentRate.subtract(BigDecimal.valueOf(3));
+                log.debug("The client is married. Rate reduced 3");
                 break;
             case DIVORCED:
                 currentRate.add(BigDecimal.ONE);
+                log.debug("The client is divorced. Rate increased 1");
+                break;
         }
 
         if (scoringData.getDependentAmount() > 1) {
@@ -243,8 +281,13 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
 
         CURRENT_RATE = currentRate;
 
-        if(reasonsRefusal.size() > 0) {
-            throw new ScoringException(Arrays.deepToString(reasonsRefusal.toArray()));
+        log.info("End process scoring. Client: {} {}", scoringData.getFirstName(), scoringData.getLastName());
+
+        if (reasonsRefusal.size() > 0) {
+            String problems = Arrays.deepToString(reasonsRefusal.toArray());
+            log.error("Denied a loan {}", problems);
+            throw new ScoringException(problems);
         }
+
     }
 }
