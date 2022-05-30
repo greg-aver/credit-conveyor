@@ -87,7 +87,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         BigDecimal rate = calculateRate(isInsuranceEnabled, isSalaryClient);
         BigDecimal monthlyPayment = calculateMonthlyPayment(totalAmount,term,rate);
         List<PaymentScheduleElement> paymentScheduleElementList = calculateListPaymentSchedule(totalAmount, term, monthlyPayment, rate);
-        BigDecimal psk = calculatePSK();
+        BigDecimal psk = calculatePSK(requestedAmount, term, paymentScheduleElementList);
         return new CreditDTO()
                 .amount(totalAmount)
                 .term(term)
@@ -119,8 +119,33 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         return resultList;
     }
 
-    private BigDecimal calculatePSK() {
-        return null;
+    /* Формула рассчета полной стоимости кредита:
+    * ПСК = (S/So - 1) / (100 * n)
+    * n - срок погашения в годах
+    * S - сумма всех кредитных платежей
+    * So - сумма полученная от банка
+    * */
+
+    private BigDecimal calculatePSK(
+            BigDecimal requestedAmount, Integer term, List<PaymentScheduleElement> paymentSchedule
+    ) {
+        BigDecimal termYears = new BigDecimal(term)
+                .divide(BigDecimal.valueOf(12))
+                .setScale(2);
+
+        BigDecimal paymentAmount = paymentSchedule
+                .stream()
+                .map(PaymentScheduleElement::getTotalPayment)
+                .reduce(BigDecimal::add).orElse(BigDecimal.ONE);
+
+        BigDecimal numerator = paymentAmount.divide(requestedAmount)
+                .subtract(BigDecimal.ONE);
+
+        return numerator
+                .divide(termYears)
+                .divide(BigDecimal.valueOf(100))
+                .divide(termYears)
+                .setScale(2);
     }
 
     private BigDecimal calculateInterestPayment(BigDecimal remainingDebt) {
