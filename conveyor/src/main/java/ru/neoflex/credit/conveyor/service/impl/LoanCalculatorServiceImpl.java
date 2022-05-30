@@ -106,7 +106,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         LocalDate datePayment = LocalDate.now();
         BigDecimal remainingDebt = totalAmount.setScale(2);
 
-        for (int i = 1; i < term + 1; i++) {
+        for (int i = 1; i <= term; i++) {
 
             BigDecimal interestPayment = calculateInterestPayment(remainingDebt);
             BigDecimal debtPayment = monthlyPayment.subtract(interestPayment);
