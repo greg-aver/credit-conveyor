@@ -13,7 +13,7 @@ public class PaymentScheduleElementFactory {
                 .number(number)
                 .date(date)
                 .totalPayment(totalPayment)
-                .interestedPayment(interestedPayment)
+                .interestPayment(interestedPayment)
                 .debtPayment(debtPayment)
                 .remainingDebt(remainingDebt);
     }

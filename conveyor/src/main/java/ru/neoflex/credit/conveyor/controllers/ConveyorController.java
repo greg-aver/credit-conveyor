@@ -3,7 +3,7 @@ package ru.neoflex.credit.conveyor.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import ru.neoflex.credit.conveyor.ConveyorApi;
+import ru.neoflex.credit.conveyor.api.ConveyorApi;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
 import ru.neoflex.credit.conveyor.model.LoanApplicationRequestDTO;
 import ru.neoflex.credit.conveyor.model.LoanOfferDTO;
