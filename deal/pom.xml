@@ -90,8 +90,8 @@
 						</goals>
 						<configuration>
 							<generatorName>spring</generatorName>
-							<apiPackage>ru.neoflex.credit.conveyor.api</apiPackage>
-							<modelPackage>ru.neoflex.credit.conveyor.model</modelPackage>
+							<apiPackage>ru.neoflex.credit.deal.api</apiPackage>
+							<modelPackage>ru.neoflex.credit.deal.model</modelPackage>
 							<typeMappings>
 								<typeMapping>double=java.math.BigDecimal</typeMapping>
 								<typeMapping>date=java.time.LocalDate</typeMapping>
