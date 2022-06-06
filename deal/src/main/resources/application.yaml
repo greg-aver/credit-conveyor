@@ -1,1 +1,17 @@
-
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: #
+    username: #
+    password: #
+  liquibase:
+    change-log: classpath:db.changelog/db.changelog-master.xml
+    url: #
+    user: #
+    password: #
+    driver-class-name: #

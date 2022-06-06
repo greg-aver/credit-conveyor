@@ -576,6 +576,32 @@ components:
           * Документы подписаны
           * Кредит выдан      
 
-
-
-
+    Passport:
+      title: passport info
+      description: Details of the client's passport.
+      type: object
+      required:
+        - series
+        - number
+        - issueDate
+        - issueBranch
+      properties:
+        series:
+          type: string
+          pattern: '[0-9]{4}'
+          example: 0102
+          description: Passport series.
+        number:
+          type: string
+          pattern: '[0-9]{6}'
+          example: 01020304
+          description: Password number.
+        issueDate:
+          type: string
+          format: date
+          example: 2022-10-03
+          description: Password issue date.
+        issueBranch:
+          type: string
+          example: Hospitable department of Dagestan.
+          description: Passport Department.
