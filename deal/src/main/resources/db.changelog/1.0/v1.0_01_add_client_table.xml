@@ -4,11 +4,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet id="v1.0.03_add_client_sequence" author="Averianov_Gregory">
+    <changeSet id="v1.0.01_add_client_sequence" author="Averianov_Gregory">
         <createSequence sequenceName="client_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
-    <changeSet id="v1.0.03_add_table_client" author="Averianov_Gregory">
+    <changeSet id="v1.0.01_add_table_client" author="Averianov_Gregory">
         <createTable tableName="client" remarks="Таблица клиентов">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -25,7 +25,7 @@
             <column name="employment_dto" type="JSONB"/>
             <column name="account" type="TEXT"/>
             <column name="application_id" type="BIGINT"/>
-            <column name="credit_id" type="BIGINT"/>
+            <column name="credit_id" type="INT"/>
         </createTable>
     </changeSet>
 

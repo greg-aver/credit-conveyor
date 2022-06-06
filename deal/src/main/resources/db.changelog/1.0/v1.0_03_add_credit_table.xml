@@ -4,12 +4,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <changeSet id="v1.0.02_add_credit_sequence" author="Averianov_Gregory">
+    <changeSet id="v1.0.03_add_credit_sequence" author="Averianov_Gregory">
         <createSequence sequenceName="credit_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
 
-    <changeSet id="v1.0.02_add_table_credit" author="Averianov_Gregory">
+    <changeSet id="v1.0.03_add_table_credit" author="Averianov_Gregory">
         <createTable tableName="credit" remarks="Таблица кредитов">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -28,7 +28,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="v1.0.02_add_credit_pk" author="Averianov_Gregory">
+    <changeSet id="v1.0.03_add_credit_pk" author="Averianov_Gregory">
         <addPrimaryKey columnNames="id" constraintName="credit_pk" tableName="credit"/>
     </changeSet>
 

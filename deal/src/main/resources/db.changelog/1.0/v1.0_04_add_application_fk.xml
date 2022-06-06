@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="v1.0.04_add_client_foreignKey_to_application_table" author="Averianon_Gregory">
+        <addForeignKeyConstraint baseColumnNames="client_id"
+                                 baseTableName="application"
+                                 constraintName="client_id_fk"
+                                 referencedColumnNames="id"
+                                 referencedTableName="client"/>
+    </changeSet>
+
+    <changeSet id="v1.0.04_add_credit_foreignKey_to_application_table" author="Averianov_Gregory">
+        <addForeignKeyConstraint baseColumnNames="credit_id"
+                                 baseTableName="application"
+                                 constraintName="credit_id_fk"
+                                 referencedColumnNames="id"
+                                 referencedTableName="credit"/>
+    </changeSet>
+
+</databaseChangeLog>

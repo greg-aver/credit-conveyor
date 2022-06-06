@@ -5,18 +5,18 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
 
-    <changeSet id="v1.0.01_add_application_sequence" author="Averianov_Gregory">
+    <changeSet id="v1.0.02_add_application_sequence" author="Averianov_Gregory">
         <createSequence sequenceName="application_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
 
-    <changeSet id="v1.0.01_add_table_application" author="Averianov_Gregory">
+    <changeSet id="v1.0.02_add_table_application" author="Averianov_Gregory">
         <createTable tableName="application" remarks="Таблица заявок">
-            <column name="id" type="BIGINT">
+            <column name="id" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="client_id" type="BIGINT"/>
-            <column name="credit_id" type="BIGINT"/>
+            <column name="client_id" type="INT"/>
+            <column name="credit_id" type="INT"/>
             <column name="status" type="VARCHAR(30)"/>
             <column name="creation_date" type="DATE"/>
             <column name="applied_offer" type="JSONB"/>
@@ -27,7 +27,7 @@
     </changeSet>
 
 
-    <changeSet id="v1.0.01_add_application_pk" author="Averianov_Gregory">
+    <changeSet id="v1.0.02_add_application_pk" author="Averianov_Gregory">
         <addPrimaryKey columnNames="id" constraintName="application_pk" tableName="application"/>
     </changeSet>
 
