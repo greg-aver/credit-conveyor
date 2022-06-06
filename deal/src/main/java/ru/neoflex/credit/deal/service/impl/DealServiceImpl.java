@@ -1,13 +1,41 @@
 package ru.neoflex.credit.deal.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.neoflex.credit.deal.model.*;
+import ru.neoflex.credit.deal.repository.ApplicationRepository;
+import ru.neoflex.credit.deal.repository.ClientRepository;
+import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
 
+import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class DealServiceImpl  implements DealService {
+@Service
+@RequiredArgsConstructor
+public class DealServiceImpl implements DealService {
+    private final ApplicationRepository applicationRepository;
+    private final ClientRepository clientRepository;
+    private final CreditRepository creditRepository;
     @Override
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
+        Client clientObject = createClientByRequest(request);
+        Client clientBD = clientRepository.save(clientObject);
+        Application applicationObject = new Application()
+                .client(clientBD)
+                .creationDate(LocalDate.now())
+                .status(PREAPPROVAL)
+                .statusHistory(List.copyOf(
+                        new ApplicationStatusHistoryDTO()
+                                .status(PREAPPROVAL)
+                                .time(LocalDateTime.now())
+                                .changeType() //??
+                ));
+        Application applicationBD = applicationRepository.save(applicationObject);
+        clientRepository.save(clientBD.application(applicationBD));
+
         return null;
     }
 
