@@ -11,6 +11,7 @@ import ru.neoflex.credit.deal.service.abstracts.DealService;
 
 import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.*;
+import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,12 +52,24 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public void offer(LoanOfferDTO loanOfferDTO) {
+        Application application = applicationRepository.getReferenceById(loanOfferDTO.getApplicationId());
 
     }
 
     @Override
     public void calculateCredit(Long applicationId, ScoringDataDTO scoringDataDTO) {
 
+    }
+
+    private List<ApplicationStatusHistoryDTO> updateStatusHistory(
+            List<ApplicationStatusHistoryDTO> statusHistoryList, ApplicationStatusEnum status, ChangeTypeEnum changeTyp) {
+        statusHistoryList.add(
+                new ApplicationStatusHistoryDTO()
+                        .status(status)
+                        .time(LocalDateTime.now())
+                        .changeType(changeTyp)
+        );
+        return statusHistoryList;
     }
 
     private Client createClientByRequest(LoanApplicationRequestDTO request) {
