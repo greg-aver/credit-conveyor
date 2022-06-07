@@ -13,8 +13,11 @@ import ru.neoflex.credit.deal.service.abstracts.DealService;
 import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.*;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
+import static ru.neoflex.credit.deal.model.CreditStatus.CALCULATED;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 @Slf4j
 @Service
@@ -46,14 +49,14 @@ public class DealServiceImpl implements DealService {
                 .status(PREAPPROVAL)
                 .statusHistory(statusHistoryList);
         Application applicationBD = applicationRepository.save(applicationObject);
-        clientRepository.save(clientBD.application(applicationBD));
+        clientRepository.save(clientBD.setApplication(applicationBD));
         log.debug("application = {}", applicationBD);
 
         List<LoanOfferDTO> offersList = conveyorFeignClient.createOffers(request).getBody();
 
         if (offersList != null && offersList.size() > 0) {
             offersList.forEach(offer -> offer.setApplicationId(applicationBD.id()));
-            offersList.sort((o1, o2) -> o1.getRate().compareTo(o2.getRate()));
+            offersList.sort(Comparator.comparing(LoanOfferDTO::getRate));
         }
         log.info("End. Offers list: {}", offersList);
 
@@ -75,21 +78,69 @@ public class DealServiceImpl implements DealService {
 
     @Override
     public void calculateCredit(Long applicationId, ScoringDataDTO scoringDataDTO) {
+        log.info("Start calculate credit");
         Application application = applicationRepository.getReferenceById(applicationId);
+        log.debug("application = {}", application);
+
         Client client = application.client();
+        log.debug("client = {}", client);
+
         LoanOfferDTO offer = application.appliedOffer();
+        log.debug("offer = {}", offer);
+
         scoringDataDTO
                 .amount(offer.getTotalAmount())
                 .term(offer.getTerm())
-                .lastName(client.lastName())
-                .firstName(client.firstName())
-                .middleName(client.middleName())
-                .gender(ScoringDataDTO.GenderEnum.valueOf(client.gender()))
-                .birthdate(client.birthDate())
-                .passportSeries(client.passport().getSeries())
-                .passportNumber(client.passport().getNumber())
+                .lastName(client.getLastName())
+                .firstName(client.getFirstName())
+                .middleName(client.getMiddleName())
+                .birthdate(client.getBirthDate())
+                .passportSeries(client.getPassport().getSeries())
+                .passportNumber(client.getPassport().getNumber())
                 .isInsuranceEnabled(offer.getIsInsuranceEnabled())
                 .isSalaryClient(offer.getIsSalaryClient());
+        log.debug("scoringDataDTO = {}", scoringDataDTO);
+
+        CreditDTO creditDTO = conveyorFeignClient.scoring(scoringDataDTO).getBody();
+        log.debug("creditDTO = {}", creditDTO);
+
+        assert creditDTO != null;
+        Credit credit = creditRepository.save(new Credit()
+                        .setAmount(creditDTO.getAmount())
+                        .setTerm(creditDTO.getTerm())
+                        .setMonthlyPayment(creditDTO.getMonthlyPayment())
+                        .setRate(creditDTO.getRate())
+                        .setPsk(creditDTO.getPsk())
+                        .setPaymentSchedule(creditDTO.getPaymentSchedule())
+                        .setIsInsuranceEnabled(creditDTO.getIsInsuranceEnabled())
+                        .setIsSalaryClient(creditDTO.getIsSalaryClient())
+                        .setClient(client)
+                        .setApplication(application)
+                        .setCreditStatus(CALCULATED)
+                );
+        log.debug("credit = {}", credit);
+
+        Passport passportInformation = new Passport()
+                .series(client.getPassport().getSeries())
+                .number(client.getPassport().getNumber())
+                .issueDate(scoringDataDTO.getPassportIssueDate())
+                .issueBranch(scoringDataDTO.getPassportIssueBranch());
+
+        clientRepository.save(client
+                .setGender(scoringDataDTO.getGender().name())
+                .setPassport(passportInformation)
+                .setMartialStatus(scoringDataDTO.getMaritalStatus().name())
+                .setDependentAmount(scoringDataDTO.getDependentAmount())
+                .setEmploymentDTO(scoringDataDTO.getEmployment())
+                .setAccount(scoringDataDTO.getAccount())
+                .setCredit(credit));
+
+        List<ApplicationStatusHistoryDTO> updatedStatusHistory = updateStatusHistory(application.statusHistory(), CC_APPROVED, AUTOMATIC);
+
+        applicationRepository.save(application
+                .status(CC_APPROVED)
+                .statusHistory(updatedStatusHistory)
+                .credit(credit));
     }
 
     private List<ApplicationStatusHistoryDTO> updateStatusHistory(
@@ -109,11 +160,11 @@ public class DealServiceImpl implements DealService {
                 .number(request.getPassportNumber());
 
         return new Client()
-                .lastName(request.getLastName())
-                .firstName(request.getFirstName())
-                .middleName(request.getMiddleName())
-                .birthDate(request.getBirthdate())
-                .email(request.getEmail())
-                .passport(passportClient);
+                .setLastName(request.getLastName())
+                .setFirstName(request.getFirstName())
+                .setMiddleName(request.getMiddleName())
+                .setBirthDate(request.getBirthdate())
+                .setEmail(request.getEmail())
+                .setPassport(passportClient);
     }
 }
