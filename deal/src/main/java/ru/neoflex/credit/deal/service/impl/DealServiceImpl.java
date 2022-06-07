@@ -1,6 +1,7 @@
 package ru.neoflex.credit.deal.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.neoflex.credit.deal.feign.ConveyorFeign;
 import ru.neoflex.credit.deal.model.*;
@@ -15,7 +16,7 @@ import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTyp
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DealServiceImpl implements DealService {
@@ -25,7 +26,11 @@ public class DealServiceImpl implements DealService {
     private final ConveyorFeign conveyorFeignClient;
     @Override
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
+        log.info("Start create application");
+
         Client clientObject = createClientByRequest(request);
+        log.debug("client = {}", clientObject);
+
         Client clientBD = clientRepository.save(clientObject);
         List<ApplicationStatusHistoryDTO> statusHistoryList = List.of(
                 new ApplicationStatusHistoryDTO()
@@ -33,6 +38,8 @@ public class DealServiceImpl implements DealService {
                         .time(LocalDateTime.now())
                         .changeType(AUTOMATIC)
         );
+        log.debug("List of application history {}", statusHistoryList);
+
         Application applicationObject = new Application()
                 .client(clientBD)
                 .creationDate(LocalDate.now())
@@ -40,13 +47,16 @@ public class DealServiceImpl implements DealService {
                 .statusHistory(statusHistoryList);
         Application applicationBD = applicationRepository.save(applicationObject);
         clientRepository.save(clientBD.application(applicationBD));
+        log.debug("application = {}", applicationBD);
 
         List<LoanOfferDTO> offersList = conveyorFeignClient.createOffers(request).getBody();
 
-        if (offersList.size() > 0) {
+        if (offersList != null && offersList.size() > 0) {
             offersList.forEach(offer -> offer.setApplicationId(applicationBD.id()));
             offersList.sort((o1, o2) -> o1.getRate().compareTo(o2.getRate()));
         }
+        log.info("End. Offers list: {}", offersList);
+
         return offersList;
     }
 
@@ -60,11 +70,26 @@ public class DealServiceImpl implements DealService {
         application.status(APPROVED);
         application.statusHistory(applicationStatusHistoryList);
         Application applicationUpdate = applicationRepository.save(application);
+        log.info("applicationUpdate = {}", applicationUpdate);
     }
 
     @Override
     public void calculateCredit(Long applicationId, ScoringDataDTO scoringDataDTO) {
-
+        Application application = applicationRepository.getReferenceById(applicationId);
+        Client client = application.client();
+        LoanOfferDTO offer = application.appliedOffer();
+        scoringDataDTO
+                .amount(offer.getTotalAmount())
+                .term(offer.getTerm())
+                .lastName(client.lastName())
+                .firstName(client.firstName())
+                .middleName(client.middleName())
+                .gender(ScoringDataDTO.GenderEnum.valueOf(client.gender()))
+                .birthdate(client.birthDate())
+                .passportSeries(client.passport().getSeries())
+                .passportNumber(client.passport().getNumber())
+                .isInsuranceEnabled(offer.getIsInsuranceEnabled())
+                .isSalaryClient(offer.getIsSalaryClient());
     }
 
     private List<ApplicationStatusHistoryDTO> updateStatusHistory(
