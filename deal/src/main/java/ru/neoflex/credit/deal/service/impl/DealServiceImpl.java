@@ -77,7 +77,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public void calculateCredit(Long applicationId, ScoringDataDTO scoringDataDTO) {
+    public void calculateCredit(Long applicationId, FinishRegistrationRequestDTO request) {
         log.info("Start calculate credit");
         Application application = applicationRepository.getReferenceById(applicationId);
         log.debug("application = {}", application);
@@ -88,7 +88,7 @@ public class DealServiceImpl implements DealService {
         LoanOfferDTO offer = application.appliedOffer();
         log.debug("offer = {}", offer);
 
-        scoringDataDTO
+        ScoringDataDTO scoringDataDTO = new ScoringDataDTO()
                 .amount(offer.getTotalAmount())
                 .term(offer.getTerm())
                 .lastName(client.getLastName())

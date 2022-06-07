@@ -48,10 +48,6 @@ paths:
       responses:
         '200':
           description: OK
-        #          content:
-        #            application/json:
-        #              schema:
-        #                $ref: '#/components/schemas/CreditDTO'
         '400':
           description: Bad Request
 
@@ -65,7 +61,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScoringDataDTO'
+              $ref: '#/components/schemas/FinishRegistrationRequestDTO'
       parameters:
         - name: "applicationId"
           in: path
