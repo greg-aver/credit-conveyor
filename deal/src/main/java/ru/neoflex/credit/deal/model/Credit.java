@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Accessors(fluent = true, chain = true)
+@Accessors(chain = true)
 @SequenceGenerator(name = "creditSeqGenerator", sequenceName="credit_id_seq", allocationSize = 1)
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Credit {
@@ -24,7 +24,7 @@ public class Credit {
     private BigDecimal amount;
 
     @Column
-    private BigDecimal term;
+    private Integer term;
 
     @Column
     private BigDecimal monthlyPayment;
@@ -44,4 +44,15 @@ public class Credit {
 
     @Column
     private Boolean isSalaryClient;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    private Client client;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "application_id", referencedColumnName = "id")
+    private Application application;
+
+    @Enumerated(EnumType.STRING)
+    CreditStatus creditStatus;
 }

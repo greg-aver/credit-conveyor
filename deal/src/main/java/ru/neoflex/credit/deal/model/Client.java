@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Accessors(chain = true, fluent = true)
+@Accessors(chain = true)
 @SequenceGenerator(name = "clientSeqGenerator", sequenceName = "client_id_seq", allocationSize = 1)
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class Client {
@@ -55,7 +55,11 @@ public class Client {
     private String account;
 
     @Column
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application_id", referencedColumnName = "id")
     private Application application;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "credit_id", referencedColumnName = "id")
+    private Credit credit;
 }

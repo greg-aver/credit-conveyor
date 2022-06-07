@@ -48,10 +48,6 @@ paths:
       responses:
         '200':
           description: OK
-        #          content:
-        #            application/json:
-        #              schema:
-        #                $ref: '#/components/schemas/CreditDTO'
         '400':
           description: Bad Request
 
@@ -65,7 +61,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScoringDataDTO'
+              $ref: '#/components/schemas/FinishRegistrationRequestDTO'
       parameters:
         - name: "applicationId"
           in: path
@@ -492,7 +488,11 @@ components:
           example: 2021-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
         changeType:
-          $ref: '#/components/schemas/ApplicationStatusEnum'
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
 
     FinishRegistrationRequestDTO:
       title: Finish registration request.
