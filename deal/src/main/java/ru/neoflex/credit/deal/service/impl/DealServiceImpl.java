@@ -53,7 +53,13 @@ public class DealServiceImpl implements DealService {
     @Override
     public void offer(LoanOfferDTO loanOfferDTO) {
         Application application = applicationRepository.getReferenceById(loanOfferDTO.getApplicationId());
-
+        List<ApplicationStatusHistoryDTO> applicationStatusHistoryList = updateStatusHistory(
+                application.statusHistory(), APPROVED, AUTOMATIC
+        );
+        application.appliedOffer(loanOfferDTO);
+        application.status(APPROVED);
+        application.statusHistory(applicationStatusHistoryList);
+        Application applicationUpdate = applicationRepository.save(application);
     }
 
     @Override
