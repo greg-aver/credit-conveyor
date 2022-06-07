@@ -9,6 +9,7 @@ import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
 
 import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
+import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,16 +24,17 @@ public class DealServiceImpl implements DealService {
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         Client clientObject = createClientByRequest(request);
         Client clientBD = clientRepository.save(clientObject);
+        List<ApplicationStatusHistoryDTO> statusHistoryList = List.of(
+                new ApplicationStatusHistoryDTO()
+                        .status(PREAPPROVAL)
+                        .time(LocalDateTime.now())
+                        .changeType(AUTOMATIC)
+        );
         Application applicationObject = new Application()
                 .client(clientBD)
                 .creationDate(LocalDate.now())
                 .status(PREAPPROVAL)
-                .statusHistory(List.copyOf(
-                        new ApplicationStatusHistoryDTO()
-                                .status(PREAPPROVAL)
-                                .time(LocalDateTime.now())
-                                .changeType() //??
-                ));
+                .statusHistory(statusHistoryList);
         Application applicationBD = applicationRepository.save(applicationObject);
         clientRepository.save(clientBD.application(applicationBD));
 
