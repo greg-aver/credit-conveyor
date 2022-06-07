@@ -2,6 +2,7 @@ package ru.neoflex.credit.deal.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.deal.feign.ConveyorFeign;
 import ru.neoflex.credit.deal.model.*;
 import ru.neoflex.credit.deal.repository.ApplicationRepository;
 import ru.neoflex.credit.deal.repository.ClientRepository;
@@ -20,6 +21,7 @@ public class DealServiceImpl implements DealService {
     private final ApplicationRepository applicationRepository;
     private final ClientRepository clientRepository;
     private final CreditRepository creditRepository;
+    private final ConveyorFeign conveyorFeignClient;
     @Override
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         Client clientObject = createClientByRequest(request);
@@ -38,7 +40,13 @@ public class DealServiceImpl implements DealService {
         Application applicationBD = applicationRepository.save(applicationObject);
         clientRepository.save(clientBD.application(applicationBD));
 
-        return null;
+        List<LoanOfferDTO> offersList = conveyorFeignClient.createOffers(request).getBody();
+
+        if (offersList.size() > 0) {
+            offersList.forEach(offer -> offer.setApplicationId(applicationBD.id()));
+            offersList.sort((o1, o2) -> o1.getRate().compareTo(o2.getRate()));
+        }
+        return offersList;
     }
 
     @Override
