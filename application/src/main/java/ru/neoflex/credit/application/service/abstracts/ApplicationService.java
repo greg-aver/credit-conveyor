@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ApplicationService {
     void offer(LoanOfferDTO loanOfferDTO);
-
     List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request);
 }

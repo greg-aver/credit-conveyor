@@ -89,7 +89,7 @@ public class LoanCalculateServiceImplTest {
                 .number(1)
                 .date(LocalDate.of(2022, 7, 1))
                 .totalPayment(BigDecimal.valueOf(336600.00))
-                .interestedPayment(BigDecimal.valueOf(82500.01))
+                .interestPayment(BigDecimal.valueOf(82500.01))
                 .debtPayment(BigDecimal.valueOf(254099.99))
                 .remainingDebt(BigDecimal.valueOf(735900.01));
         PaymentScheduleElement paymentElementActual = PaymentScheduleElementFactory.createPaymentScheduleElement(
@@ -104,7 +104,7 @@ public class LoanCalculateServiceImplTest {
         assertEquals(paymentElementExpected.getNumber(), paymentElementActual.getNumber());
         assertEquals(paymentElementExpected.getDate(), paymentElementActual.getDate());
         assertEquals(paymentElementExpected.getTotalPayment(), paymentElementActual.getTotalPayment());
-        assertEquals(paymentElementExpected.getInterestedPayment(), paymentElementActual.getInterestedPayment());
+        assertEquals(paymentElementExpected.getInterestPayment(), paymentElementActual.getInterestPayment());
         assertEquals(paymentElementExpected.getDebtPayment(), paymentElementActual.getDebtPayment());
         assertEquals(paymentElementExpected.getRemainingDebt(), paymentElementActual.getRemainingDebt());
     }
@@ -142,21 +142,21 @@ public class LoanCalculateServiceImplTest {
                 .number(1)
                 .date(LocalDate.of(2022, 7, 1))
                 .totalPayment(BigDecimal.valueOf(336600.00))
-                .interestedPayment(BigDecimal.valueOf(82500.01))
+                .interestPayment(BigDecimal.valueOf(82500.01))
                 .debtPayment(BigDecimal.valueOf(254099.99))
                 .remainingDebt(BigDecimal.valueOf(735900.01));
         PaymentScheduleElement paymentElement2 = new PaymentScheduleElement()
                 .number(2)
                 .date(LocalDate.of(2022, 8, 1))
                 .totalPayment(BigDecimal.valueOf(336600.00))
-                .interestedPayment(BigDecimal.valueOf(61325.01))
+                .interestPayment(BigDecimal.valueOf(61325.01))
                 .debtPayment(BigDecimal.valueOf(275274.99))
                 .remainingDebt(BigDecimal.valueOf(460625.02));
         PaymentScheduleElement paymentElement3 = new PaymentScheduleElement()
                 .number(3)
                 .date(LocalDate.of(2022, 9, 1))
                 .totalPayment(BigDecimal.valueOf(336600.00))
-                .interestedPayment(BigDecimal.valueOf(38385.42))
+                .interestPayment(BigDecimal.valueOf(38385.42))
                 .debtPayment(BigDecimal.valueOf(298214.58))
                 .remainingDebt(BigDecimal.valueOf(162410.44));
         List<PaymentScheduleElement> paymentScheduleElementList = List.of(

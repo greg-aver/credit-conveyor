@@ -18,6 +18,3 @@ spring:
 properties:
   feign:
     url: 'http://localhost:8080/conveyor'
-
-  # 1. Enable logging
-  # 2. Add url for feign
