@@ -119,12 +119,10 @@ public class ConveyorValidator {
 
         try {
             if (reasonsRefusal.size() > 0) {
-                String problems = Arrays.deepToString(reasonsRefusal.toArray());
-                log.error("Denied a loan {}", problems);
-                throw new ScoringException(problems);
+                throw new ScoringException(Arrays.deepToString(reasonsRefusal.toArray()));
             }
         } catch (ScoringException e) {
-            System.out.println(e.getMessage());
+            log.error("Denied a loan {}", e.getMessage());
         }
         return currentRate;
     }
