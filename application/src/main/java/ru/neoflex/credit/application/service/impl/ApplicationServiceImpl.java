@@ -1,6 +1,7 @@
 package ru.neoflex.credit.application.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.neoflex.credit.application.exception.PreScoringException;
 import ru.neoflex.credit.application.feign.DealFeignClient;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
     private final DealFeignClient dealFeignClient;
@@ -29,6 +31,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         preScoring(request);
         List<LoanOfferDTO> loanOffersList = dealFeignClient.createApplication(request).getBody();
+        log.info("loanOffersList = {}", loanOffersList);
         return loanOffersList;
     }
 
@@ -41,6 +44,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     5. Email адрес - строка, подходящая под паттерн [\w\.]{2,50}@[\w\.]{2,20}
     6. Серия паспорта - 4 цифры, номер паспорта - 6 цифр.**/
     private void preScoring(LoanApplicationRequestDTO request) {
+        log.info("Start pre-scoring");
         ArrayList<String> reasonsRefusal = new ArrayList<>();
 
         if (!request.getFirstName().matches("[A-Za-z]{2,30}")) {
@@ -80,7 +84,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         if (reasonsRefusal.size() > 0) {
-            throw new PreScoringException("Failed pre scoring: " + Arrays.deepToString(reasonsRefusal.toArray()));
+            String fails = Arrays.deepToString(reasonsRefusal.toArray());
+            log.error("Verification failed: {}",  fails);
+            throw new PreScoringException("Failed pre scoring: " + fails);
         }
+
+        log.info("End process scoring. Client: {} {}", request.getFirstName(), request.getLastName());
     }
 }
