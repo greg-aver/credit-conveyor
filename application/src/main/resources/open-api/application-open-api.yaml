@@ -1,0 +1,455 @@
+openapi: 3.0.0
+info:
+  title: 'MVP Level 3'
+  description: 'Сервис application'
+  version: 1.0.0
+  contact:
+    name: 'Григорий Аверьянов'
+    url: 'https://github.com/greg-aver/credit-conveyor'
+servers:
+  - url: 'http://localhost:8080/'
+    description: 'localhost'
+paths:
+  /application:
+    post:
+      summary: application
+      description: Прескоринг + запрос на расчёт возможных условий кредита.
+      operationId: createApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanApplicationRequestDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanOfferDTO'
+
+        '400':
+          description: Bad Request
+
+  /application/offer:
+    put:
+      summary: offer
+      description: Выбор одного из предложений.
+      operationId: offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'LoanOfferDTO'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+
+components:
+  schemas:
+    LoanApplicationRequestDTO:
+      title: Loan Application Request
+      type: object
+      description: Short application info.
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - email
+        - birthdate
+        - passportSeries
+        - passportNumber
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 1000000
+          minimum: 10000
+          description: Requested loan amount.
+        term:
+          type: integer
+          example: 39
+          minimum: 6
+          description: Requested loan terms (months).
+        firstName:
+          type: string
+          example: Mikhail
+          description: Requested the borrower's first name.
+          pattern: '[A-Za-z\-]{2,30}'
+        middleName:
+          type: string
+          example: Alexey
+          description: Requested the borrower's middle name.
+          pattern: '[A-Za-z\-]{2,30}'
+        lastName:
+          type: string
+          example: Deev
+          description: Requested the borrower's last name.
+          pattern: '[A-Za-z\-]{2,30}'
+        email:
+          type: string
+          example: mdeev@neoflex.ru
+          description: Requested the borrower's email.
+          pattern: '[\w\.]{2,50}@[\w\.]{2,20}.[\w\.]{2,20}'
+        birthdate:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Date of birth.
+        passportSeries:
+          type: string
+          example: 0808
+          pattern: '[0-9]{4}'
+          description: Passport series.
+        passportNumber:
+          type: string
+          example: 010203
+          pattern: '[0-9]{6}'
+          description: Passport number.
+
+    LoanOfferDTO:
+      title: Loan offer
+      type: object
+      description: Detailed loan offer
+      required:
+        - applicationId
+        - requestedAmount
+        - totalAmount
+        - term
+        - monthlyPayment
+        - rate
+        - isInsuranceEnabled
+        - isSalaryClient
+      properties:
+        applicationId:
+          type: integer
+          format: int64
+          example: 300
+          minimum: 0
+          description: Response application id.
+        requestedAmount:
+          type: number
+          format: double
+          example: 1000000
+          minimum: 10000
+          description: Requested amount.
+        totalAmount:
+          type: number
+          format: double
+          example: 1000000
+          minimum: 10000
+          description: Total loan amount.
+        term:
+          type: integer
+          example: 49
+          minimum: 6
+          description: Loan terms.
+        monthlyPayment:
+          type: number
+          format: double
+          example: 344.4
+          minimum: 0
+          description: Monthly loan payment.
+        rate:
+          type: number
+          format: double
+          example: 17.4
+          minimum: 0
+          description: Loan interest rate.
+        isInsuranceEnabled:
+          type: boolean
+          example: true
+          description: Is insurance included?
+        isSalaryClient:
+          type: boolean
+          example: false
+          description: Does the client have a salary card in the bank?
+
+    ScoringDataDTO:
+      title: Scoring Data
+      description: Detailed data about the client for scoring.
+      type: object
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - middleName
+        - gender
+        - birthdate
+        - passportSeries
+        - passportNumber
+        - passportIssueData
+        - passportIssueBranch
+        - maritalStatus
+        - dependentAmount
+        - employment
+        - account
+        - isInsuranceEnabled
+        - isSalaryClient
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 100000
+          description: Amount of credit.
+          minimum: 10000
+        term:
+          type: integer
+          example: 24
+          minimum: 6
+          description: Requested loan terms (months).
+        firstName:
+          type: string
+          example: Mikhail
+          description: Requested the borrower's first name.
+          pattern: '[A-Za-z\-]{2,30}'
+        middleName:
+          type: string
+          example: Alexey
+          description: Requested the borrower's middle name.
+          pattern: '[A-Za-z\-]{2,30}'
+        lastName:
+          type: string
+          example: Deev
+          description: Requested the borrower's last name.
+          pattern: '[A-Za-z\-]{2,30}'
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - NON_BINARY
+          description: >
+            Types of gender:
+              * Мужчина
+              * Женщина
+              * Небинарный пол
+        birthdate:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Date of Birth.
+        passportSeries:
+          type: string
+          example: 0808
+          pattern: '[0-9]{4}'
+          description: Passport series.
+        passportNumber:
+          type: string
+          example: 010203
+          pattern: '[0-9]{6}'
+          description: Passport number.
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Passport issue date.
+        passportIssueBranch:
+          type: string
+          example: Hospitable department of Dagestan.
+          description: Passport Department.
+        maritalStatus:
+          type: string
+          enum:
+            - MARRIED
+            - DIVORCED
+            - SINGLE
+            - WIDOW_WIDOWER
+          description: >
+            Types of marital status:
+              * Женат/замужем
+              * Счастлив в разводе
+              * Круто одному
+              * Вдова/вдовец
+        dependentAmount:
+          type: integer
+          example: 100000
+          minimum: 10000
+          description: Количество иждивенцев.
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 003456
+          description: Customer account.
+        isInsuranceEnabled:
+          type: boolean
+          example: true
+          description: Is insurance included?
+        isSalaryClient:
+          type: boolean
+          example: false
+          description: Does the client have a salary card in the bank?
+
+    CreditDTO:
+      title: credit
+      type: object
+      description: Loan offer to a customer.
+      required:
+        - amount
+        - term
+        - monthlyPayment
+        - rate
+        - psk
+        - isInsuranceEnabled
+        - isSalaryClient
+        - paymentSchedule
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 1000000
+          minimum: 10000
+          description: Requested loan amount.
+        term:
+          type: integer
+          example: 39
+          minimum: 6
+          description: Requested loan terms (months).
+        monthlyPayment:
+          type: number
+          format: double
+          example: 344.4
+          minimum: 0
+          description: Monthly loan payment.
+        rate:
+          type: number
+          format: double
+          example: 17.4
+          minimum: 0
+          description: Loan interest rate.
+        psk:
+          type: number
+          format: double
+          example: 10155.5
+          minimum: 10000
+          description: Total cost of the loan.
+        isInsuranceEnabled:
+          type: boolean
+          example: true
+          description: Is insurance included?
+        isSalaryClient:
+          type: boolean
+          example: false
+          description: Does the client have a salary card in the bank?
+        paymentSchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentScheduleElement'
+
+    EmploymentDTO:
+      title: employment
+      type: object
+      description: Detailed information about the work of the client.
+      required:
+        - employmentStatus
+        - employerINN
+        - salary
+        - position
+        - workExperienceTotal
+        - workExperienceCurrent
+      properties:
+        employmentStatus:
+          type: string
+          enum:
+            - UNEMPLOYED
+            - SELF_EMPLOYED
+            - EMPLOYED
+            - BUSINESS_OWNER
+          description: >
+            Types of work status:
+              * Безработный
+              * Самозанятый
+              * Трудоустроен
+              * Владелец бизнеса
+        employerINN:
+          type: string
+          example: 00085866
+          description: INN
+        salary:
+          type: number
+          format: double
+          example: 12000
+          description: Client salary.
+        position:
+          type: string
+          enum:
+            - WORKER
+            - MID_MANAGER
+            - TOP_MANAGER
+            - OWNER
+          description: >
+            Client position:
+              * Работник 
+              * Менеджер среднего звена
+              * Топ-менеджер
+              * Владелец
+        workExperienceTotal:
+          type: integer
+          description: Work experience total.
+          example: 12
+        workExperienceCurrent:
+          type: integer
+          example: 4
+          description: Work experience current.
+
+    PaymentScheduleElement:
+      title: payment schedule element.
+      type: object
+      description: Monthly payment.
+      required:
+        - number
+        - date
+        - totalPayment
+        - interestPayment
+        - debtPayment
+        - remainingDebt
+      properties:
+        number:
+          type: integer
+          example: 10
+          description: Payment number.
+        date:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Payment date.
+        totalPayment:
+          type: number
+          format: double
+          example: 1222.7
+          description: totalPayment = interestPayment + debtPayment.
+        interestPayment:
+          type: number
+          format: double
+          example: 7000
+          description: Payment of the loan.
+        debtPayment:
+          type: number
+          format: double
+          example: 988
+          description: Loan interest payment.
+        remainingDebt:
+          type: number
+          format: double
+          example: 300
+          description: Loan balance.
+
+
+
+
+
+
+

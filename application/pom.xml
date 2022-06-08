@@ -103,7 +103,7 @@
 							<importMappings>
 								<importMapping>java.util.Date=java.time.LocalDateTime</importMapping>
 							</importMappings>
-							<inputSpec>${project.basedir}/src/main/resources/open-api/deal-open-api.yaml</inputSpec>
+							<inputSpec>${project.basedir}/src/main/resources/open-api/application-open-api.yaml</inputSpec>
 							<configOptions>
 								<delegatePattern>false</delegatePattern>
 								<interfaceOnly>true</interfaceOnly>
