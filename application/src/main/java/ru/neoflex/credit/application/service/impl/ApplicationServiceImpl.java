@@ -55,7 +55,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             reasonsRefusal.add("Incorrect last name by client");
         }
 
-        if (request.getMiddleName() != null &&  request.getMiddleName().matches("[A-Za-z]{2,30}")) {
+        if (request.getMiddleName() != null && !request.getMiddleName().matches("[A-Za-z]{2,30}")) {
             reasonsRefusal.add("Incorrect middle name by client");
         }
 
@@ -89,6 +89,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new PreScoringException("Failed pre scoring: " + fails);
         }
 
-        log.info("End process scoring. Client: {} {}", request.getFirstName(), request.getLastName());
+        log.info("End process pre-scoring \n" + "Verification was successful. Client: {} {}", request.getFirstName(), request.getLastName());
     }
 }
