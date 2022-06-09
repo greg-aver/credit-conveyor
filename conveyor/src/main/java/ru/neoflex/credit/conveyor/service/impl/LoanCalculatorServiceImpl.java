@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.conveyor.exception.ScoringException;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
 import ru.neoflex.credit.conveyor.model.PaymentScheduleElement;
 import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
@@ -112,7 +113,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     }
 
     @Override
-    public CreditDTO calculateCredit(ScoringDataDTO scoringData) {
+    public CreditDTO calculateCredit(ScoringDataDTO scoringData) throws ScoringException {
         CURRENT_RATE = validator.scoring(scoringData, BASE_RATE);
         BigDecimal requestedAmount = scoringData.getAmount();
         boolean isInsuranceEnabled = scoringData.getIsInsuranceEnabled();

@@ -117,13 +117,12 @@ public class ScoringService {
 
         log.info("End process scoring. Client: {} {}", scoringData.getFirstName(), scoringData.getLastName());
 
-        try {
-            if (reasonsRefusal.size() > 0) {
-                throw new ScoringException(Arrays.deepToString(reasonsRefusal.toArray()));
-            }
-        } catch (ScoringException e) {
-            log.error("Denied a loan {}", e.getMessage());
+        if (reasonsRefusal.size() > 0) {
+            String epicFail = Arrays.deepToString(reasonsRefusal.toArray());
+            log.error("Denied a loan {}", epicFail);
+            throw new ScoringException(epicFail);
         }
+
         return currentRate;
     }
 }
