@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 @Component
 @Slf4j
-public class ConveyorValidator {
+public class ScoringService {
     /* Правила скоринга:
 
     1. Рабочий статус: Безработный → отказ; Самозанятый → ставка увеличивается на 1; Владелец бизнеса → ставка увеличивается на 3

@@ -1,24 +1,21 @@
 package ru.neoflex.credit.conveyor.validator;
 
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.neoflex.credit.conveyor.exception.ScoringException;
 import ru.neoflex.credit.conveyor.model.EmploymentDTO;
 import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConveyorValidatorTest {
+public class ScoringServiceTest {
     @InjectMocks
-    private ConveyorValidator validator;
+    private ScoringService validator;
 
     @Test
     public void scoring_DataValid() {

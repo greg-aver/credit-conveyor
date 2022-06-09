@@ -4,21 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.neoflex.credit.conveyor.exception.ScoringException;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
-import ru.neoflex.credit.conveyor.model.EmploymentDTO;
 import ru.neoflex.credit.conveyor.model.PaymentScheduleElement;
 import ru.neoflex.credit.conveyor.model.ScoringDataDTO;
 import ru.neoflex.credit.conveyor.service.abstracts.LoanCalculatorService;
 import ru.neoflex.credit.conveyor.service.impl.factory.PaymentScheduleElementFactory;
-import ru.neoflex.credit.conveyor.validator.ConveyorValidator;
+import ru.neoflex.credit.conveyor.validator.ScoringService;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.math.RoundingMode.CEILING;
@@ -39,7 +35,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     private final String RATE_DISCOUNT_SALARY_CLIENT;
     @Value("${properties.rateDiscountInsuranceEnabled}")
     private final String RATE_DISCOUNT_INSURANCE_ENABLED;
-    private final ConveyorValidator validator;
+    private final ScoringService validator;
 
     @Override
     public BigDecimal calculateTotalAmount(BigDecimal amount, boolean isInsuranceEnabled) {
