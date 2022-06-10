@@ -29,6 +29,7 @@ public class ApplicationValidatorTest {
                 .email("mdeev@neoflex.ru")
                 .passportSeries("0102")
                 .passportNumber("010203");
+
         validator.preScoring(request);
     }
 
