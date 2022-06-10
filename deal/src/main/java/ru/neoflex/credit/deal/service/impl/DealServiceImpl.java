@@ -10,15 +10,15 @@ import ru.neoflex.credit.deal.repository.ClientRepository;
 import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
 
-import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
-import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.*;
-import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
-import static ru.neoflex.credit.deal.model.CreditStatus.CALCULATED;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+
+import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
+import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
+import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
+import static ru.neoflex.credit.deal.model.CreditStatus.CALCULATED;
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -99,6 +99,7 @@ public class DealServiceImpl implements DealService {
                 .passportNumber(client.getPassport().getNumber())
                 .isInsuranceEnabled(offer.getIsInsuranceEnabled())
                 .isSalaryClient(offer.getIsSalaryClient());
+
         log.debug("scoringDataDTO = {}", scoringDataDTO);
 
         CreditDTO creditDTO = conveyorFeignClient.scoring(scoringDataDTO).getBody();
@@ -127,9 +128,9 @@ public class DealServiceImpl implements DealService {
                 .issueBranch(scoringDataDTO.getPassportIssueBranch());
 
         clientRepository.save(client
-                .setGender(scoringDataDTO.getGender().name())
+                .setGender(request.getGender().name())
                 .setPassport(passportInformation)
-                .setMartialStatus(scoringDataDTO.getMaritalStatus().name())
+                .setMartialStatus(request.getMaritalStatus().name())
                 .setDependentAmount(scoringDataDTO.getDependentAmount())
                 .setEmploymentDTO(scoringDataDTO.getEmployment())
                 .setAccount(scoringDataDTO.getAccount())
