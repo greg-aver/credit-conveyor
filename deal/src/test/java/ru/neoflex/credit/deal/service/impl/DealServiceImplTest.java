@@ -309,6 +309,7 @@ public class DealServiceImplTest {
                 .setIsSalaryClient(creditDTO.getIsSalaryClient())
                 .setCreditStatus(CALCULATED);
 
+
         when(applicationRepository.getReferenceById(anyLong())).thenReturn(application);
         when(creditRepository.save(any(Credit.class))).thenReturn(credit);
         when(conveyorFeignClient.scoring(any(ScoringDataDTO.class))).thenReturn(ResponseEntity.of(Optional.of(creditDTO)));
