@@ -1,65 +1,51 @@
 package ru.neoflex.credit.application.service;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ru.neoflex.credit.application.exception.PreScoringException;
 import ru.neoflex.credit.application.feign.DealFeignClient;
 import ru.neoflex.credit.application.service.impl.ApplicationServiceImpl;
+import ru.neoflex.credit.application.validator.ApplicationValidator;
 import ru.neoflex.credit.deal.model.LoanApplicationRequestDTO;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import ru.neoflex.credit.deal.model.LoanOfferDTO;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static ru.neoflex.credit.application.generator.GeneratorUtils.generateLoanApplicationRequestDTO;
+import static ru.neoflex.credit.application.generator.GeneratorUtils.generateLoanOfferDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceImplTest {
     @Mock
     private DealFeignClient dealFeignClient;
 
+    @Mock
+    private ApplicationValidator validator;
+
     @InjectMocks
     private ApplicationServiceImpl service;
 
-    @Test
-    public void preScoring_ok() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        LoanApplicationRequestDTO request = new LoanApplicationRequestDTO()
-                .lastName("Deev")
-                .firstName("Mikhail")
-                .middleName("Alexey")
-                .amount(BigDecimal.valueOf(100000))
-                .term(12)
-                .birthdate(LocalDate.of(2001, 2,3))
-                .email("mdeev@neoflex.ru")
-                .passportSeries("0102")
-                .passportNumber("010203");
+    private LoanOfferDTO loanOfferDTO;
+    private LoanApplicationRequestDTO request;
 
-        Method preScoring = service.getClass().getDeclaredMethod("preScoring", LoanApplicationRequestDTO.class);
-        preScoring.setAccessible(true);
-        preScoring.invoke(service, request);
+    @Before
+    public void setUp() {
+        request = generateLoanApplicationRequestDTO();
+        loanOfferDTO = generateLoanOfferDTO(request);
+    }
+
+    @Test
+    public void offer() {
+        service.offer(loanOfferDTO);
+        verify(dealFeignClient, times(1)).offer(loanOfferDTO);
+    }
+
+    @Test
+    public void createApplication() {
 
     }
-    @Test
-    public void preScoring_Invalid_Exception() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        LoanApplicationRequestDTO request = new LoanApplicationRequestDTO()
-                .lastName("w")
-                .firstName("w")
-                .middleName("w")
-                .amount(BigDecimal.valueOf(1))
-                .term(1)
-                .birthdate(LocalDate.of(2021, 3, 4))
-                .email("23")
-                .passportSeries("2r")
-                .passportNumber("3e");
 
-        Method preScoring = service.getClass().getDeclaredMethod("preScoring", LoanApplicationRequestDTO.class);
-        preScoring.setAccessible(true);
-        preScoring.invoke(service, request);
-
-        assertThrows(PreScoringException.class, (Executable) preScoring.invoke(service, request));
-    }
 }

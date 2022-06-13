@@ -47,17 +47,20 @@ public class ScoringService {
                 break;
         }
 
-        switch (employment.getPosition()) {
-            case MID_MANAGER:
-                currentRate = currentRate.subtract(BigDecimal.valueOf(2));
-                log.debug("Client is middle manager. Rate reduced by 3");
-                break;
-            case TOP_MANAGER:
-                currentRate = currentRate.subtract(BigDecimal.valueOf(4));
-                log.debug("Client is top manager. Rate reduced by 4");
-                break;
+        if (employment.getPosition() == null) {
+            reasonsRefusal.add("Denied a loan: Client unemployed");
+        } else {
+            switch (employment.getPosition()) {
+                case MID_MANAGER:
+                    currentRate = currentRate.subtract(BigDecimal.valueOf(2));
+                    log.debug("Client is middle manager. Rate reduced by 3");
+                    break;
+                case TOP_MANAGER:
+                    currentRate = currentRate.subtract(BigDecimal.valueOf(4));
+                    log.debug("Client is top manager. Rate reduced by 4");
+                    break;
+            }
         }
-
         int clientAge = Period.between(scoringData.getBirthdate(), LocalDate.now()).getYears();
 
         if (scoringData.getAmount()

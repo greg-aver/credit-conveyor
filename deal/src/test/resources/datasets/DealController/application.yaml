@@ -1,0 +1,39 @@
+application:
+  - id: 1L
+    client:
+      - id: 1L
+        firstName: Eba
+        lastName: Eblov
+        middleName: Eblevich
+        birthDate: 1967-01-01
+        email: eba@mail.ru
+        gender: PIDOR
+        martialStatus: SINGLE
+        dependentAmount: 1000
+        passport:
+          series: 0101
+          number: 010201
+          issueDate: 1989-03-03
+          issueBranch: 234-444
+        employmentDTO:
+          employmentStatus: SELF_EMPLOYED
+          employerINN: 94949944
+          salary: 60000
+          position: MID_MANAGER
+          workExperienceTotal: 12
+          workExperienceCurrent: 10
+    credit:
+      - id: 1L
+        amount: 60000
+        term: 10
+        monthlyPayment: 30000
+        rate: 2
+        psk: 100000
+        paymentSchedule:
+        isInsuranceEnabled: true
+        isSalaryClient: true
+    status: PREAPPROVAL
+    creationDate:
+    signDate:
+    sesCode:
+    statusHistory:
