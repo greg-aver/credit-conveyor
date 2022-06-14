@@ -9,7 +9,7 @@ import ru.neoflex.credit.deal.repository.ApplicationRepository;
 import ru.neoflex.credit.deal.repository.ClientRepository;
 import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
-import ru.neoflex.credit.dossier.service.abstracts.DossierService;
+import ru.neoflex.credit.deal.service.abstracts.DossierService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,8 +85,9 @@ public class DealServiceImpl implements DealService {
                 .applicationId(applicationUpdate.id())
                 .theme(FINISH_REGISTRATION);
 
-        log.info("start sending message. Message = {}", message);
-        dossierService.
+        log.debug("Start sending message. Message = {}", message);
+        dossierService.send(message);
+        log.info("Message go to dossier");
     }
 
     @Override
