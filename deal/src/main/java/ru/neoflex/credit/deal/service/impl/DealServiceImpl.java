@@ -9,6 +9,7 @@ import ru.neoflex.credit.deal.repository.ApplicationRepository;
 import ru.neoflex.credit.deal.repository.ClientRepository;
 import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
+import ru.neoflex.credit.dossier.service.abstracts.DossierService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +20,8 @@ import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.neoflex.credit.deal.model.CreditStatus.CALCULATED;
+import static ru.neoflex.credit.deal.model.EmailMessage.ThemeEnum.FINISH_REGISTRATION;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,8 @@ public class DealServiceImpl implements DealService {
     private final ClientRepository clientRepository;
     private final CreditRepository creditRepository;
     private final ConveyorFeignClient conveyorFeignClient;
+
+    private final DossierService dossierService;
     @Override
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         log.info("Start create application");
@@ -74,6 +79,14 @@ public class DealServiceImpl implements DealService {
         application.statusHistory(applicationStatusHistoryList);
         Application applicationUpdate = applicationRepository.save(application);
         log.info("applicationUpdate = {}", applicationUpdate);
+
+        EmailMessage message = new EmailMessage()
+                .address(applicationUpdate.client().getEmail())
+                .applicationId(applicationUpdate.id())
+                .theme(FINISH_REGISTRATION);
+
+        log.info("start sending message. Message = {}", message);
+        dossierService.
     }
 
     @Override
