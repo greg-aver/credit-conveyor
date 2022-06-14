@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: 'MVP Level 2'
-  description: 'Сервис conveyor'
+  title: 'MVP Level 4'
+  description: 'Сервис application'
   version: 1.0.0
   contact:
     name: 'Григорий Аверьянов'
@@ -9,73 +9,7 @@ info:
 servers:
   - url: 'http://localhost:8080/'
     description: 'localhost'
-paths:
-  /deal/application:
-    post:
-      summary: Рассчет возможных условий кредита
-      description: Метод получает LoanApplicationRequestDTO и на этом основании делает прескоринг. Создает 4 конкретных предложения
-      operationId: createApplication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoanApplicationRequestDTO'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LoanOfferDTO'
-
-        '400':
-          description: Bad Request
-
-  /deal/offer:
-    put:
-      summary: offer
-      description: Выбор одного из предложений.
-      operationId: offer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: 'LoanOfferDTO'
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: Bad Request
-
-  /deal/calculate/{applicationId}:
-    put:
-      summary: registration
-      description: Завершение регистрации + полный подсчёт кредита.
-      operationId: calculateCredit
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FinishRegistrationRequestDTO'
-      parameters:
-        - name: "applicationId"
-          in: path
-          required: true
-          example: 1324
-          description: Application number.
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK.
-        '400':
-          description: Bad Request.
+paths: {}
 
 components:
   schemas:
@@ -456,7 +390,7 @@ components:
           type: number
           format: double
           example: 1222.7
-          description: totalPayment = interestedPayment + debtPayment.
+          description: totalPayment = interestPayment + debtPayment.
         interestPayment:
           type: number
           format: double
@@ -473,136 +407,40 @@ components:
           example: 300
           description: Loan balance.
 
-    ApplicationStatusHistoryDTO:
-      title: Application status history.
+    EmailMessage:
+      title: Email Message
       type: object
-      required:
-        - status
-        - time
-        - changeType
       properties:
-        status:
-          $ref: '#/components/schemas/ApplicationStatusEnum'
-        time:
+        address:
           type: string
-          format: date-time
-          example: 2021-05-25
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-        changeType:
+          pattern: '[\w\.]*@\w{2,10}\.\w{2,5}'
+          example: mdeev@neoflex.ru
+          description: Client's email address.
+        theme:
           type: string
-          enum:
-            - AUTOMATIC
-            - MANUAL
-
-
-    FinishRegistrationRequestDTO:
-      title: Finish registration request.
-      type: object
-      description: Additional information about the client.
-      required:
-        - gender
-        - maritalStatus
-        - dependentAmount
-        - passportIssueDate
-        - passportIssueBranch
-        - employment
-      properties:
-        gender:
-          type: string
-          enum:
-            - MALE
-            - FEMALE
-            - NON_BINARY
+          example: DOCUMENTS_CREATED
           description: >
-            Types of gender:
-              * Мужчина
-              * Женщина
-              * Небинарный пол
-        maritalStatus:
-          type: string
+            Types of theme:
+              * Финишная регистрация
+              * Документы созданы
+              * Кредит выдан
+              * Перейти к оформлению документов
+              * Ссылка на подписание и код
           enum:
-            - MARRIED
-            - DIVORCED
-            - SINGLE
-            - WIDOW_WIDOWER
-          description: >
-            Types of marital status:
-              * Женат/замужем
-              * Счастлив в разводе
-              * Круто одному
-              * Вдова/вдовец
-        dependentAmount:
+            - FINISH_REGISTRATION
+            - DOCUMENTS_CREATED
+            - CREDIT_ISSUE
+            - COMPLETE_DOCUMENT
+            - LINK_SIGN
+        applicationId:
           type: integer
-          example: 100000
-          minimum: 10000
-          description: Количество иждивенцев.
-        passportIssueDate:
-          type: string
-          format: date
-          example: 2021-05-25
-          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
-          description: Passport issue date.
-        passportIssueBranch:
-          type: string
-          example: Hospitable department of Dagestan.
-          description: Passport Department.
-        employment:
-          $ref: '#/components/schemas/EmploymentDTO'
-        account:
-          type: string
-          example: 003456
-          description: Customer account.
+          format: int64
+          example: 99
+          description: Application Id.
 
-    ApplicationStatusEnum:
-      type: string
-      enum:
-        - PREAPPROVAL
-        - APPROVED
-        - CC_DENIED
-        - CC_APPROVED
-        - PREPARE_DOCUMENTS
-        - DOCUMENT_CREATED
-        - CLIENT_DENIED
-        - DOCUMENT_SIGNED
-        - CREDIT_ISSUED
-      description: >
-        Types of status:
-          * Предодобрена
-          * Одобрена
-          * Отклонена Кредитным Конвейером
-          * Одобрена Кредитным Конвейером
-          * Подготовка документов
-          * Документы созданы
-          * Отклонено Клиентом
-          * Документы подписаны
-          * Кредит выдан      
 
-    Passport:
-      title: passport info
-      description: Details of the client's passport.
-      type: object
-      required:
-        - series
-        - number
-        - issueDate
-        - issueBranch
-      properties:
-        series:
-          type: string
-          pattern: '[0-9]{4}'
-          example: 0102
-          description: Passport series.
-        number:
-          type: string
-          pattern: '[0-9]{6}'
-          example: 01020304
-          description: Password number.
-        issueDate:
-          type: string
-          format: date
-          example: 2022-10-03
-          description: Password issue date.
-        issueBranch:
-          type: string
-          example: Hospitable department of Dagestan.
-          description: Passport Department.
+
+
+
+
+
