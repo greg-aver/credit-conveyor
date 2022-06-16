@@ -7,9 +7,10 @@ import ru.neoflex.credit.deal.service.abstracts.MessageService;
 @RequiredArgsConstructor
 public class MessageController implements DealApi {
     private final MessageService messageService;
+
     @Override
-    public ResponseEntity<Void> code(Long applicationId) {
-        messageService.code(applicationId);
+    public ResponseEntity<Void> code(Long applicationId, Integer ses) {
+        messageService.code(applicationId, ses);
         return ResponseEntity.ok().build();
     }
 

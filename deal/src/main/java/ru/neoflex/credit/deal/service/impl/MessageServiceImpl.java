@@ -77,7 +77,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void code(Long applicationId) {
+    public void code(Long applicationId, Integer ses) {
 
     }
 }
