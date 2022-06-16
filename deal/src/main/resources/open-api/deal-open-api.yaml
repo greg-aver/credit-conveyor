@@ -77,6 +77,74 @@ paths:
         '400':
           description: Bad Request.
 
+  /deal/document/{applicationId}/send:
+    post:
+      summary: send application
+      description: Запрос на отправку документов.
+      operationId: send
+      parameters:
+        - name: "applicationId"
+          in: path
+          required: true
+          example: 1324
+          description: Application number.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK.
+        '400':
+          description: Bad Request.
+
+  /deal/document/{applicationId}/sign:
+    post:
+      summary: sign application
+      description: Запрос на подписание документов.
+      operationId: sign
+      parameters:
+        - name: "applicationId"
+          in: path
+          required: true
+          example: 1324
+          description: Application number.
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK.
+        '400':
+          description: Bad Request.
+
+  /deal/document/{applicationId}/code:
+    post:
+      summary: code application
+      description: Подписание документов.
+      operationId: code
+      parameters:
+        - name: "applicationId"
+          in: path
+          required: true
+          example: 1324
+          description: Application number.
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        description: Ses code.
+        content:
+          application/json:
+            schema:
+              type: integer
+              example: 1234
+      responses:
+        '200':
+          description: OK.
+        '400':
+          description: Bad Request.
+
 components:
   schemas:
     LoanApplicationRequestDTO:
@@ -606,3 +674,35 @@ components:
           type: string
           example: Hospitable department of Dagestan.
           description: Passport Department.
+
+
+    EmailMessage:
+      title: Email Message
+      type: object
+      properties:
+        address:
+          type: string
+          pattern: '[\w\.]*@\w{2,10}\.\w{2,5}'
+          example: mdeev@neoflex.ru
+          description: Client's email address.
+        theme:
+          type: string
+          example: DOCUMENTS_CREATED
+          description: >
+            Types of theme:
+              * Финишная регистрация
+              * Документы созданы
+              * Кредит выдан
+              * Перейти к оформлению документов
+              * Ссылка на подписание и код
+          enum:
+            - FINISH_REGISTRATION
+            - CREATE_DOCUMENTS
+            - CREDIT_ISSUED
+            - APPLICATION_DENIED
+            - SEND_SES
+        applicationId:
+          type: integer
+          format: int64
+          example: 99
+          description: Application Id.
