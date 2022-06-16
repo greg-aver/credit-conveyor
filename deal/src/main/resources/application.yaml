@@ -18,3 +18,10 @@ spring:
 properties:
   feign:
     url: 'http://localhost:8080/conveyor'
+
+topic:
+  finish-registration: conveyor-finish-registration
+  create-documents: conveyor-create-documents
+  credit-issued: conveyor-credit-issued
+  application-denied: conveyor-application-denied
+  send-ses: conveyor-send-ses

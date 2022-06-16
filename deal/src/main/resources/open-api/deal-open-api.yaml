@@ -697,10 +697,10 @@ components:
               * Ссылка на подписание и код
           enum:
             - FINISH_REGISTRATION
-            - DOCUMENTS_CREATED
-            - CREDIT_ISSUE
-            - COMPLETE_DOCUMENT
-            - LINK_SIGN
+            - CREATE_DOCUMENTS
+            - CREDIT_ISSUED
+            - APPLICATION_DENIED
+            - SEND_SES
         applicationId:
           type: integer
           format: int64

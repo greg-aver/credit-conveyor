@@ -18,7 +18,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.*;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.neoflex.credit.deal.model.CreditStatus.ISSUED;
-import static ru.neoflex.credit.deal.model.EmailMessage.ThemeEnum.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -39,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
         Application applicationDB = applicationRepository.save(application);
         log.info("New application = {}", applicationDB);
         dossierService.send(new EmailMessage()
-                .theme(COMPLETE_DOCUMENT)
+                .theme(EmailMessage.ThemeEnum.CREATE_DOCUMENTS)
                 .address(application.client().getEmail())
                 .applicationId(applicationId));
     }
@@ -76,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
         dossierService.send(new EmailMessage()
                 .applicationId(applicationId)
                 .address(emailAddress)
-                .theme(LINK_SIGN));
+                .theme(EmailMessage.ThemeEnum.APPLICATION_DENIED));
     }
 
     @Override
@@ -117,7 +116,7 @@ public class MessageServiceImpl implements MessageService {
         creditRepository.save(credit.setCreditStatus(ISSUED));
 
         dossierService.send(new EmailMessage()
-                .theme(CREDIT_ISSUE)
+                .theme(EmailMessage.ThemeEnum.CREDIT_ISSUED)
                 .applicationId(applicationId)
                 .address(application.client().getEmail()));
     }
