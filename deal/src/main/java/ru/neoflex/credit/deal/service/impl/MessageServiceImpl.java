@@ -78,6 +78,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void code(Long applicationId, Integer ses) {
+        Application application = applicationRepository.getReferenceById(applicationId);
+        validApplication(application, DOCUMENT_CREATED);
 
     }
 }
