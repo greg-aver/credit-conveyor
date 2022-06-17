@@ -7,6 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.deal.model.EmailMessage;
 import ru.neoflex.credit.dossier.sender.abstracts.SenderEmailService;
 
 import javax.mail.MessagingException;
@@ -29,6 +30,17 @@ public class SenderEmailServiceImpl implements SenderEmailService {
         message.setTo(toAddress);
         message.setSubject(subject);
         message.setText(text);
+        mailSender.send(message);
+        log.info("Send email: {}", message);
+    }
+
+    @Override
+    public void sendMessage(EmailMessage emailMessage) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(FROM_EMAIL);
+        message.setTo(emailMessage.getAddress());
+        message.setSubject(emailMessage.getSubject());
+        message.setText(emailMessage.getText());
         mailSender.send(message);
         log.info("Send email: {}", message);
     }
