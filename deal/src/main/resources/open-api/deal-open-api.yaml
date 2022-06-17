@@ -701,6 +701,7 @@ components:
             - CREDIT_ISSUED
             - APPLICATION_DENIED
             - SEND_SES
+            - SEND_DOCUMENTS
         applicationId:
           type: integer
           format: int64

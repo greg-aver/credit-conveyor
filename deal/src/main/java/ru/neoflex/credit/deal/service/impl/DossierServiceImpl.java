@@ -29,12 +29,14 @@ public class DossierServiceImpl implements DossierService {
     private final String APPLICATION_DENIED_TOPIC;
     @Value("${topic.send-ses}")
     private final String SEND_SES_TOPIC;
+    @Value("${topic.send-documents}")
+    private final String SEND_DOCUMENTS_TOPIC;
 
 
     @Override
     public void send(EmailMessage message) {
         String topic = defineTopic(message.getTheme());
-        String messageJson = null;
+        String messageJson;
         try {
             messageJson = objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
@@ -62,6 +64,9 @@ public class DossierServiceImpl implements DossierService {
                 break;
             case SEND_SES:
                 topic = SEND_SES_TOPIC;
+                break;
+            case SEND_DOCUMENTS:
+                topic = SEND_DOCUMENTS_TOPIC;
                 break;
         }
         log.info("topic = {}", topic);

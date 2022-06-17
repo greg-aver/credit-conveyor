@@ -25,3 +25,4 @@ topic:
   credit-issued: conveyor-credit-issued
   application-denied: conveyor-application-denied
   send-ses: conveyor-send-ses
+  send-documents: conveyor-send-documents

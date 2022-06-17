@@ -38,7 +38,7 @@ public class MessageServiceImpl implements MessageService {
         Application applicationDB = applicationRepository.save(application);
         log.info("New application = {}", applicationDB);
         dossierService.send(new EmailMessage()
-                .theme(EmailMessage.ThemeEnum.CREATE_DOCUMENTS)
+                .theme(EmailMessage.ThemeEnum.SEND_DOCUMENTS)
                 .address(application.client().getEmail())
                 .applicationId(applicationId));
     }
@@ -75,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
         dossierService.send(new EmailMessage()
                 .applicationId(applicationId)
                 .address(emailAddress)
-                .theme(EmailMessage.ThemeEnum.APPLICATION_DENIED));
+                .theme(EmailMessage.ThemeEnum.SEND_SES));
     }
 
     @Override
