@@ -407,7 +407,7 @@ components:
           example: 300
           description: Loan balance.
 
-    EmailMessage:
+    MessageKafka:
       title: Email Message
       type: object
       properties:
@@ -428,15 +428,37 @@ components:
               * Ссылка на подписание и код
           enum:
             - FINISH_REGISTRATION
-            - DOCUMENTS_CREATED
-            - CREDIT_ISSUE
-            - COMPLETE_DOCUMENT
-            - LINK_SIGN
+            - CREATE_DOCUMENTS
+            - CREDIT_ISSUED
+            - APPLICATION_DENIED
+            - SEND_SES
+            - SEND_DOCUMENTS
         applicationId:
           type: integer
           format: int64
           example: 99
           description: Application Id.
+
+    EmailMessage:
+      title: email message
+      type: object
+      description: Email that goes to the client.
+      required:
+        - title
+        - text
+        - address
+      properties:
+        title:
+          type: string
+          example: Won a billion!
+        text:
+          type: string
+          example: Congratulations, you are a lucky person. Won a billion!
+        address:
+          type: string
+          example: email@gmail.com
+
+
 
 
 
