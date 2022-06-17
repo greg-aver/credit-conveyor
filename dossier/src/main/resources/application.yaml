@@ -1,1 +1,8 @@
+feign:
+  url:
+    deal:
+      #
 
+sender:
+  from:
+    email: credit@ept.ru

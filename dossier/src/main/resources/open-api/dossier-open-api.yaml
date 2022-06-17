@@ -444,11 +444,11 @@ components:
       type: object
       description: Email that goes to the client.
       required:
-        - title
+        - subject
         - text
         - address
       properties:
-        title:
+        subject:
           type: string
           example: Won a billion!
         text:
