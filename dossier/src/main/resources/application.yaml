@@ -6,3 +6,25 @@ feign:
 sender:
   from:
     email: credit@ept.ru
+
+email-message:
+  send-document:
+    subject: "Your loan documents"
+    text: "Your loan documents are ready. Application {applicationId}. Send a request to sign documents"
+  send-ses:
+    subject: "Your Simple Electronic Signature (SES)"
+    text: "Your SES code {sesCode} for your application #{applicationId}. \n Submit the code here: LINK"
+  create-document:
+    subject: "Create documents"
+    text: "Loan Application {applicationId}. Checks passed. Submit a request to create documents. LINK"
+  credit-issued:
+    subject: "Credit issued!"
+    text: "The loan for your application #{applicationId} has been issued"
+  application-denied:
+    subject: "Loan application rejected"
+    text: "Application {applicationId} denied"
+  finish-registration:
+    subject: "Finish registration"
+    text: "Loan application {applicationId} approved! Follow this link https://LINK"
+
+

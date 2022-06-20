@@ -7,6 +7,7 @@ import ru.neoflex.credit.deal.model.ApplicationDTO;
 
 @FeignClient(name = "deal-feign-client", url = "${feign.url.deal}")
 public interface DealFeignClient {
+    //TODO: add method in ms deal
     @GetMapping("/application/{applicationId}")
     ApplicationDTO getApplicationById(@PathVariable Long applicationId);
 }
