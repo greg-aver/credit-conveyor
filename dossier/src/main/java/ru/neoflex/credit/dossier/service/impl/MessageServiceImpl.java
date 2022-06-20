@@ -1,5 +1,7 @@
 package ru.neoflex.credit.dossier.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,20 @@ public class MessageServiceImpl implements MessageService {
     @Value("${email-message.application-denied.text}")
     private final String APPLICATION_DENIED_TEXT;
 
+    private final ObjectMapper objectMapper;
+
+
+    public MessageKafka getMessageFromJson(String messageJson) {
+        log.info("Start attempting conversion message json {} to MessageKafka", messageJson);
+        try {
+            MessageKafka messageKafka = objectMapper.readValue(messageJson, MessageKafka.class);
+            log.debug("Attempt was successful. Result: {}", messageKafka);
+            return messageKafka;
+        } catch (JsonProcessingException e) {
+            log.error("Failed to get messageKafka {} from JSON", messageJson);
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void sendMessage(MessageKafka messageKafka) {
@@ -98,4 +114,6 @@ public class MessageServiceImpl implements MessageService {
         log.info("email message = {}", emailMessage);
         return emailMessage;
     }
+
+
 }
