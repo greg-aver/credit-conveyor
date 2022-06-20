@@ -116,5 +116,12 @@ public class MessageServiceImpl implements MessageService {
         return emailMessage;
     }
 
-
+    @Override
+    public EmailMessage convertJsonToEmailMessage(String messageJson, String stage) {
+        log.info(stage);
+        MessageKafka messageKafka = getMessageFromJson(messageJson);
+        EmailMessage emailMessage = kafkaMessageToEmailMessage(messageKafka);
+        log.info("Email message: {}", emailMessage);
+        return emailMessage;
+    }
 }

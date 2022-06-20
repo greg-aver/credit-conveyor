@@ -7,4 +7,5 @@ public interface MessageService {
     void sendMessage(MessageKafka messageKafka);
     MessageKafka getMessageFromJson(String messageJson);
     EmailMessage kafkaMessageToEmailMessage(MessageKafka messageKafka);
+    EmailMessage convertJsonToEmailMessage(String messageJson, String stage);
 }
