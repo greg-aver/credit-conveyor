@@ -51,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
 
     private final ObjectMapper objectMapper;
 
-
+    @Override
     public MessageKafka getMessageFromJson(String messageJson) {
         log.info("Start attempting conversion message json {} to MessageKafka", messageJson);
         try {
@@ -69,7 +69,8 @@ public class MessageServiceImpl implements MessageService {
         senderEmailService.sendMessage(kafkaMessageToEmailMessage(messageKafka));
     }
 
-    private EmailMessage kafkaMessageToEmailMessage(MessageKafka messageKafka) {
+    @Override
+    public EmailMessage kafkaMessageToEmailMessage(MessageKafka messageKafka) {
         String text = null;
         String subject = null;
         Long applicationId = dealFeignClient
