@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import ru.neoflex.credit.deal.model.ApplicationDTO;
 import ru.neoflex.credit.deal.model.EmailMessage;
 import ru.neoflex.credit.deal.model.MessageKafka;
 import ru.neoflex.credit.dossier.feign.DealFeignClient;
@@ -78,7 +79,10 @@ public class KafkaConsumer {
 
         List<File> files = documentService.createAllDocuments(messageKafka.getApplicationId());
         Map<String, File> attachment = files.stream().collect(Collectors.toMap(File::getName, file -> file));
-        dealFeignClient.updateApplicationStatusById(messageKafka.getApplicationId(), DOCUMENT_CREATED);
+        log.info("attachment: \n{}", attachment);
+        ApplicationDTO application = dealFeignClient.updateApplicationStatusById(messageKafka.getApplicationId(), DOCUMENT_CREATED);
+        log.info("current application = {}", application);
+
         senderEmailService.sendMessageWithAttachment(
                 emailMessage.getAddress(), emailMessage.getSubject(), emailMessage.getText(), attachment
         );
