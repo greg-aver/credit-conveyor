@@ -5,11 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.neoflex.credit.deal.model.EmailMessage;
+import ru.neoflex.credit.deal.model.MessageKafka;
+import ru.neoflex.credit.dossier.feign.DealFeignClient;
 import ru.neoflex.credit.dossier.sender.abstracts.SenderEmailService;
+import ru.neoflex.credit.dossier.service.abstracts.DocumentService;
 import ru.neoflex.credit.dossier.service.abstracts.MessageService;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static ru.neoflex.credit.deal.model.ApplicationStatus.DOCUMENT_CREATED;
 
 @RequiredArgsConstructor
 @Component
@@ -17,7 +24,9 @@ import java.util.Map;
 public class KafkaConsumer {
 
     private final MessageService messageService;
+    private final DocumentService documentService;
     private final SenderEmailService senderEmailService;
+    private final DealFeignClient dealFeignClient;
 
     @KafkaListener(topics = "${topic.finish-registration}")
     public void consumeFinishRegistration(String messageJson) {
@@ -62,12 +71,14 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${topic.send-documents}")
     public void consumeSendDocuments(String messageJson) {
         String stage = String.format("Send documents. Message = = %s", messageJson);
-        EmailMessage emailMessage = messageService.convertJsonToEmailMessage(messageJson, stage);
+        log.info(stage);
+        MessageKafka messageKafka = messageService.getMessageFromJson(messageJson);
+        EmailMessage emailMessage = messageService.kafkaMessageToEmailMessage(messageKafka);
+        log.info("Email message: {}", emailMessage);
 
-        //TODO: Создать спецальный сервис для работы с документами. В нем метод createDocuments
-
-        Map<String, File> attachment = null;
-
+        List<File> files = documentService.createAllDocuments(messageKafka.getApplicationId());
+        Map<String, File> attachment = files.stream().collect(Collectors.toMap(File::getName, file -> file));
+        dealFeignClient.updateApplicationStatusById(messageKafka.getApplicationId(), DOCUMENT_CREATED);
         senderEmailService.sendMessageWithAttachment(
                 emailMessage.getAddress(), emailMessage.getSubject(), emailMessage.getText(), attachment
         );

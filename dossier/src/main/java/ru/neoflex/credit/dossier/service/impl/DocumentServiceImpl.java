@@ -38,8 +38,6 @@ public class DocumentServiceImpl implements DocumentService {
     @Value("${document.text.loan-payment-schedule}")
     private final String LOAN_PAYMENT_SCHEDULE_TEXT;
 
-
-
     @Override
     public File createDocument(DocumentType documentType, Map<String, String> data) {
         String textDocument;
