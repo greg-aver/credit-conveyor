@@ -257,6 +257,7 @@ components:
       type: object
       description: Loan offer to a customer.
       required:
+        - id
         - amount
         - term
         - monthlyPayment
@@ -266,6 +267,11 @@ components:
         - isSalaryClient
         - paymentSchedule
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 700
+          description: Credit id.
         amount:
           type: number
           format: double
@@ -592,6 +598,88 @@ components:
           type: string
           example: 11223344556677889900
           description: Client's master account.
+
+
+    ApplicationStatusHistoryDTO:
+      title: Application status history.
+      type: object
+      required:
+        - status
+        - time
+        - changeType
+      properties:
+        status:
+          $ref: '#/components/schemas/ApplicationStatusEnum'
+        time:
+          type: string
+          format: date-time
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+        changeType:
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
+
+    FinishRegistrationRequestDTO:
+      title: Finish registration request.
+      type: object
+      description: Additional information about the client.
+      required:
+        - gender
+        - maritalStatus
+        - dependentAmount
+        - passportIssueDate
+        - passportIssueBranch
+        - employment
+      properties:
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - NON_BINARY
+          description: >
+            Types of gender:
+              * Мужчина
+              * Женщина
+              * Небинарный пол
+        maritalStatus:
+          type: string
+          enum:
+            - MARRIED
+            - DIVORCED
+            - SINGLE
+            - WIDOW_WIDOWER
+          description: >
+            Types of marital status:
+              * Женат/замужем
+              * Счастлив в разводе
+              * Круто одному
+              * Вдова/вдовец
+        dependentAmount:
+          type: integer
+          example: 100000
+          minimum: 10000
+          description: Количество иждивенцев.
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Passport issue date.
+        passportIssueBranch:
+          type: string
+          example: Hospitable department of Dagestan.
+          description: Passport Department.
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 003456
+          description: Customer account.
+
 
 
 

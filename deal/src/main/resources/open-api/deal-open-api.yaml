@@ -391,6 +391,7 @@ components:
       type: object
       description: Loan offer to a customer.
       required:
+        - id
         - amount
         - term
         - monthlyPayment
@@ -400,6 +401,11 @@ components:
         - isSalaryClient
         - paymentSchedule
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 7000
+          description: Credit id.
         amount:
           type: number
           format: double
@@ -497,6 +503,67 @@ components:
           type: integer
           example: 4
           description: Work experience current.
+    ClientDTO:
+      title: Client
+      type: object
+      description: Client's info.
+      properties:
+        firstName:
+          type: string
+          example: Ivan
+          description: First name
+        lastName:
+          type: string
+          example: Ivanov
+          description: Last name
+        middleName:
+          type: string
+          example: Ivanonovich
+          description: Middle name (if present).
+        email:
+          type: string
+          example: iivanov@email.com
+          description: Client's email.
+        gender:
+          type: string
+          example: MALE
+          description: Client's gender.
+        birthdate:
+          type: string
+          format: date
+          example: 1996-11-27
+          description: Client's birthdate
+        passportSeries:
+          type: string
+          example: 1234
+          description: Client's passport series
+        passportNumber:
+          type: string
+          example: 123456
+          description: Client's passport series
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2016-11-27
+          description: Client's passport issue date.
+        passportIssueBranch:
+          type: string
+          example: 123-456
+          description: Client's passport issue branch.
+        maritalStatus:
+          type: string
+          example: SINGLE
+          description: Client's marital status.
+        dependentAmount:
+          type: integer
+          example: 1
+          description: Client's dependents amount.
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 11223344556677889900
+          description: Client's master account.
 
     PaymentScheduleElement:
       title: payment schedule element.
@@ -540,6 +607,48 @@ components:
           format: double
           example: 300
           description: Loan balance.
+
+
+    ApplicationDTO:
+      title: Application
+      type: object
+      description: All application info.
+      required:
+        - id
+        - status
+        - client
+        - creationDate
+        - statusHistory
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+          description: Application id.
+        client:
+          $ref: '#/components/schemas/ClientDTO'
+        credit:
+          $ref: '#/components/schemas/CreditDTO'
+        status:
+          $ref: '#/components/schemas/ApplicationStatusEnum'
+        creationDate:
+          type: string
+          format: date-time
+          example: 2022-05-01
+          description: 'Application creation date'
+        signDate:
+          type: string
+          format: date-time
+          example: 2022-05-01
+          description: 'Application sign date'
+        sesCode:
+          type: string
+          example: 1234
+          description: 'Application Simple Electric Sign code'
+        statusHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationStatusHistoryDTO'
 
     ApplicationStatusHistoryDTO:
       title: Application status history.
