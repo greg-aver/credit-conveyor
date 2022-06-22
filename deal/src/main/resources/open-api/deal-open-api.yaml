@@ -145,6 +145,51 @@ paths:
         '400':
           description: Bad Request.
 
+  /deal/application/{applicationId}:
+    get:
+      operationId: getApplicationById
+      description: Get application by application id.
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          example: 200
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: return application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDTO'
+        '400':
+          description: bad response.
+
+  /deal/application/{applicationId}/status:
+    put:
+      description: update application status by applicationId.
+      operationId: updateApplicationStatusById
+      parameters:
+        - name: applicationId
+          required: true
+          example: 100
+          in: path
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: return application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDTO'
+        '400':
+          description: bad response.
+
+
 components:
   schemas:
     LoanApplicationRequestDTO:

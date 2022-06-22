@@ -4,10 +4,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.neoflex.credit.deal.model.ApplicationDTO;
 import ru.neoflex.credit.deal.model.ApplicationStatus;
 
 @FeignClient(name = "deal-feign-client", url = "${feign.url.deal}")
+@RequestMapping("/deal")
 public interface DealFeignClient {
     //TODO: add methods in ms deal
     @GetMapping("/application/{applicationId}")
