@@ -2,9 +2,11 @@ package ru.neoflex.credit.deal.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 import ru.neoflex.credit.deal.api.DealApi;
 import ru.neoflex.credit.deal.service.abstracts.MessageService;
 @RequiredArgsConstructor
+@RestController
 public class MessageController implements DealApi {
     private final MessageService messageService;
 
