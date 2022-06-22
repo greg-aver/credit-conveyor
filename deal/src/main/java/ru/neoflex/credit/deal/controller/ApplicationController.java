@@ -17,7 +17,7 @@ public class ApplicationController implements DealApi {
     }
 
     @Override
-    public ResponseEntity<ApplicationDTO> updateApplicationStatusById(Long applicationId) {
-        return ResponseEntity.ok(applicationService.updateApplicationStatusById(applicationId));
+    public ResponseEntity<ApplicationDTO> updateApplicationStatusById(Long applicationId, String applicationStatus) {
+        return ResponseEntity.ok(applicationService.updateApplicationStatusById(applicationId, applicationStatus));
     }
 }
