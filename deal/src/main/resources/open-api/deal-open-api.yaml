@@ -662,6 +662,7 @@ components:
         - id
         - status
         - client
+        - credit
         - creationDate
         - statusHistory
       properties:
