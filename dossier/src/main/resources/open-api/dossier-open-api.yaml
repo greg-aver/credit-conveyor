@@ -257,6 +257,7 @@ components:
       type: object
       description: Loan offer to a customer.
       required:
+        - id
         - amount
         - term
         - monthlyPayment
@@ -266,6 +267,11 @@ components:
         - isSalaryClient
         - paymentSchedule
       properties:
+        id:
+          type: integer
+          format: int64
+          example: 700
+          description: Credit id.
         amount:
           type: number
           format: double
@@ -444,11 +450,11 @@ components:
       type: object
       description: Email that goes to the client.
       required:
-        - title
+        - subject
         - text
         - address
       properties:
-        title:
+        subject:
           type: string
           example: Won a billion!
         text:
@@ -458,6 +464,221 @@ components:
           type: string
           example: email@gmail.com
 
+    ApplicationStatusHistoryDTO:
+      title: Application Status History
+      type: object
+      description: Application Status Changing History.
+      properties:
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        time:
+          type: string
+          format: date-time
+        changeType:
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
+    ApplicationStatus:
+      type: string
+      enum:
+        - REQUEST_DENIED
+        - PREAPPROVAL
+        - APPROVED
+        - CC_DENIED
+        - CC_APPROVED
+        - PREPARE_DOCUMENTS
+        - DOCUMENT_CREATED
+        - CLIENT_DENIED
+        - DOCUMENT_SIGNED
+        - CREDIT_ISSUED
+      example: APPROVED
+      description: Application status.
+
+    ApplicationDTO:
+      title: Application
+      type: object
+      description: All application info.
+      required:
+        - id
+        - status
+        - client
+        - creationDate
+        - statusHistory
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 123
+          description: Application id.
+        client:
+          $ref: '#/components/schemas/ClientDTO'
+        credit:
+          $ref: '#/components/schemas/CreditDTO'
+        status:
+          $ref: '#/components/schemas/ApplicationStatus'
+        creationDate:
+          type: string
+          format: date-time
+          example: 2022-05-01
+          description: 'Application creation date'
+        signDate:
+          type: string
+          format: date-time
+          example: 2022-05-01
+          description: 'Application sign date'
+        sesCode:
+          type: string
+          example: 1234
+          description: 'Application Simple Electric Sign code'
+        statusHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationStatusHistoryDTO'
+
+    ClientDTO:
+      title: Client
+      type: object
+      description: Client's info.
+      properties:
+        firstName:
+          type: string
+          example: Ivan
+          description: First name
+        lastName:
+          type: string
+          example: Ivanov
+          description: Last name
+        middleName:
+          type: string
+          example: Ivanonovich
+          description: Middle name (if present).
+        email:
+          type: string
+          example: iivanov@email.com
+          description: Client's email.
+        gender:
+          type: string
+          example: MALE
+          description: Client's gender.
+        birthdate:
+          type: string
+          format: date
+          example: 1996-11-27
+          description: Client's birthdate
+        passportSeries:
+          type: string
+          example: 1234
+          description: Client's passport series
+        passportNumber:
+          type: string
+          example: 123456
+          description: Client's passport series
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2016-11-27
+          description: Client's passport issue date.
+        passportIssueBranch:
+          type: string
+          example: 123-456
+          description: Client's passport issue branch.
+        maritalStatus:
+          type: string
+          example: SINGLE
+          description: Client's marital status.
+        dependentAmount:
+          type: integer
+          example: 1
+          description: Client's dependents amount.
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 11223344556677889900
+          description: Client's master account.
+
+
+    ApplicationStatusHistoryDTO:
+      title: Application status history.
+      type: object
+      required:
+        - status
+        - time
+        - changeType
+      properties:
+        status:
+          $ref: '#/components/schemas/ApplicationStatusEnum'
+        time:
+          type: string
+          format: date-time
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+        changeType:
+          type: string
+          enum:
+            - AUTOMATIC
+            - MANUAL
+
+
+    FinishRegistrationRequestDTO:
+      title: Finish registration request.
+      type: object
+      description: Additional information about the client.
+      required:
+        - gender
+        - maritalStatus
+        - dependentAmount
+        - passportIssueDate
+        - passportIssueBranch
+        - employment
+      properties:
+        gender:
+          type: string
+          enum:
+            - MALE
+            - FEMALE
+            - NON_BINARY
+          description: >
+            Types of gender:
+              * Мужчина
+              * Женщина
+              * Небинарный пол
+        maritalStatus:
+          type: string
+          enum:
+            - MARRIED
+            - DIVORCED
+            - SINGLE
+            - WIDOW_WIDOWER
+          description: >
+            Types of marital status:
+              * Женат/замужем
+              * Счастлив в разводе
+              * Круто одному
+              * Вдова/вдовец
+        dependentAmount:
+          type: integer
+          example: 100000
+          minimum: 10000
+          description: Количество иждивенцев.
+        passportIssueDate:
+          type: string
+          format: date
+          example: 2021-05-25
+          pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+          description: Passport issue date.
+        passportIssueBranch:
+          type: string
+          example: Hospitable department of Dagestan.
+          description: Passport Department.
+        employment:
+          $ref: '#/components/schemas/EmploymentDTO'
+        account:
+          type: string
+          example: 003456
+          description: Customer account.
 
 
 
