@@ -167,6 +167,22 @@ paths:
         '400':
           description: bad response.
 
+  /deal/application/all:
+    get:
+      operationId: getAllApplication
+      description: Get all applications.
+      responses:
+        '200':
+          description: return all applications.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationDTO'
+        '400':
+          description: bad response.
+
   /deal/application/{applicationId}/status:
     put:
       description: update application status by applicationId.

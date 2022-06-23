@@ -12,6 +12,7 @@ import ru.neoflex.credit.deal.service.abstracts.DossierService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.neoflex.credit.deal.model.EmailMessage.ThemeEnum.APPLICATION_DENIED;
@@ -64,5 +65,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application applicationNew = applicationRepository.save(application);
         log.info("Update application:\n {}", applicationNew);
         return applicationMapper.toDto(applicationNew);
+    }
+
+    @Override
+    public List<ApplicationDTO> getAllApplication() {
+        return applicationRepository.findAll().stream().map(applicationMapper::toDto).collect(Collectors.toList());
     }
 }
