@@ -1,7 +1,6 @@
 feign:
   url:
-    deal:
-      #
+    deal: 'http://localhost:8080/deal'
 
 sender:
   from:
@@ -26,6 +25,15 @@ email-message:
   finish-registration:
     subject: "Finish registration"
     text: "Loan application {applicationId} approved! Follow this link https://LINK"
+
+spring:
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: dossier-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 topic:
   finish-registration: conveyor-finish-registration
