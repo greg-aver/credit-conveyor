@@ -464,22 +464,6 @@ components:
           type: string
           example: email@gmail.com
 
-    ApplicationStatusHistoryDTO:
-      title: Application Status History
-      type: object
-      description: Application Status Changing History.
-      properties:
-        status:
-          $ref: '#/components/schemas/ApplicationStatus'
-        time:
-          type: string
-          format: date-time
-        changeType:
-          type: string
-          enum:
-            - AUTOMATIC
-            - MANUAL
-
     ApplicationStatus:
       type: string
       enum:
