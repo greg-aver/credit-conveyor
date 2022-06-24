@@ -1,6 +1,6 @@
 feign:
   url:
-    deal: 'http://localhost:8080/deal'
+    deal: "http://localhost:8080/deal"
 
 sender:
   from:
@@ -47,44 +47,39 @@ document:
   text:
     contract: >
     Credit contract ${creditId}
-      Full name - ${clientFullName}
-      Passport - ${clientPassport}
-      Credit -
-        amount - ${creditAmount}
-        term - ${creditTerm}
-        monthly payment - ${monthlyPayment}
-        rate - ${rate}
-        psk - ${psk}
-        credit date - ${creditDate}
-        additional services -
-          insurance - ${isInsuranceEnabled}
-          salary client - ${isSalaryClient}
+    Full name - ${clientFullName}
+    Passport - ${clientPassport}
+    Credit -
+    amount - ${creditAmount}
+    term - ${creditTerm}
+    monthly payment - ${monthlyPayment}
+    rate - ${rate}
+    psk - ${psk}
+    credit date - ${creditDate}
+    additional services -
+    insurance - ${isInsuranceEnabled}
+    salary client - ${isSalaryClient}
 
     loan-payment-schedule: >
     Payment schedule for credit contract ${creditId}
-      Client's full name - ${clientFullName}
-      Payment schedule -
-        ${paymentSchedule}
+    Client's full name - ${clientFullName}
+    Payment schedule -
+    ${paymentSchedule}
 
-    credit-application:  >
-    Credit application ${applicationId}
-      Client -
-        full name - ${clientFullName}
-        birthdate - ${clientBirthdate}
-        gender - ${clientGender}
-        passport - ${clientPassport}
-        email - ${clientEmail}
-        martial status - ${clientMartialStatus}
-        dependent amount - ${clientDependentAmount}
-        Employment -
-          employment status - ${employmentStatus}
-          employer INN - ${employerINN}
-          salary - ${employmentSalary}
-          employment position - ${employmentPosition}
-          work experience total - ${employmentWorkExperienceTotal}
-          work experience current - ${employmentWorkExperienceCurrent}
-
-
-
-
-
+    credit-application: >
+      Credit application ${applicationId}
+        Client -
+          full name - ${clientFullName}
+          birthdate - ${clientBirthdate}
+          gender - ${clientGender}
+          passport - ${clientPassport}
+          email - ${clientEmail}
+          martial status - ${clientMartialStatus}
+          dependent amount - ${clientDependentAmount}
+          Employment -
+            employment status - ${employmentStatus}
+            employer INN - ${employerINN}
+            salary - ${employmentSalary}
+            employment position - ${employmentPosition}
+            work experience total - ${employmentWorkExperienceTotal}
+            work experience current - ${employmentWorkExperienceCurrent}

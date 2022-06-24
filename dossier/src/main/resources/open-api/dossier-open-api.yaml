@@ -427,6 +427,7 @@ components:
           example: DOCUMENTS_CREATED
           description: >
             Types of theme:
+            Types of theme:
               * Финишная регистрация
               * Документы созданы
               * Кредит выдан
