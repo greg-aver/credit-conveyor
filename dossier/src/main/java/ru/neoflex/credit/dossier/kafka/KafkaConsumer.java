@@ -29,7 +29,7 @@ public class KafkaConsumer {
     private final SenderEmailService senderEmailService;
     private final DealFeignClient dealFeignClient;
 
-    @KafkaListener(topics = "${topic.finish-registration}")
+    @KafkaListener(topics = "${topic.finish-registration}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeFinishRegistration(String messageJson) {
         String stage = String.format("Finish registration. Message = %s", messageJson);
         senderEmailService.sendMessage(
@@ -37,7 +37,7 @@ public class KafkaConsumer {
         );
     }
 
-    @KafkaListener(topics = "${topic.create-documents}")
+    @KafkaListener(topics = "${topic.create-documents}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeCreateDocuments(String messageJson) {
         String stage = String.format("Create documents. Message = = %s", messageJson);
         senderEmailService.sendMessage(
@@ -45,7 +45,7 @@ public class KafkaConsumer {
         );
     }
 
-    @KafkaListener(topics = "${topic.credit-issued}")
+    @KafkaListener(topics = "${topic.credit-issued}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeCreditIssued(String messageJson) {
         String stage = String.format("Credit issued. Message = = %s", messageJson);
         senderEmailService.sendMessage(
@@ -53,7 +53,7 @@ public class KafkaConsumer {
         );
     }
 
-    @KafkaListener(topics = "${topic.application-denied}")
+    @KafkaListener(topics = "${topic.application-denied}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeApplicationDenied(String messageJson) {
         String stage = String.format("Application denied. Message = = %s", messageJson);
         senderEmailService.sendMessage(
@@ -61,7 +61,7 @@ public class KafkaConsumer {
         );
     }
 
-    @KafkaListener(topics = "${topic.send-ses}")
+    @KafkaListener(topics = "${topic.send-ses}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeSendSes(String messageJson) {
         String stage = String.format("Send ses. Message = = %s", messageJson);
         senderEmailService.sendMessage(
@@ -69,7 +69,7 @@ public class KafkaConsumer {
         );
     }
 
-    @KafkaListener(topics = "${topic.send-documents}")
+    @KafkaListener(topics = "${topic.send-documents}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeSendDocuments(String messageJson) {
         String stage = String.format("Send documents. Message = = %s", messageJson);
         log.info(stage);
