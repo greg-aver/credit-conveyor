@@ -427,6 +427,7 @@ components:
           example: DOCUMENTS_CREATED
           description: >
             Types of theme:
+            Types of theme:
               * Финишная регистрация
               * Документы созданы
               * Кредит выдан
@@ -463,22 +464,6 @@ components:
         address:
           type: string
           example: email@gmail.com
-
-    ApplicationStatusHistoryDTO:
-      title: Application Status History
-      type: object
-      description: Application Status Changing History.
-      properties:
-        status:
-          $ref: '#/components/schemas/ApplicationStatus'
-        time:
-          type: string
-          format: date-time
-        changeType:
-          type: string
-          enum:
-            - AUTOMATIC
-            - MANUAL
 
     ApplicationStatus:
       type: string
