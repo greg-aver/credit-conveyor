@@ -1,22 +1,25 @@
 package ru.neoflex.credit.gateway.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.gateway.feign.DealFeignClient;
 import ru.neoflex.credit.gateway.service.abstracts.DocumentService;
 
 @Service
+@RequiredArgsConstructor
 public class DocumentServiceImpl implements DocumentService {
-    @Override
-    public void sendSesCode(Long applicationId, Integer sesCode) {
 
-    }
+    private final DealFeignClient dealFeignClient;
 
-    @Override
     public void createDocuments(Long applicationId) {
-
+        dealFeignClient.send(applicationId);
     }
 
-    @Override
-    public void signDocuments(Long applicationId) {
+    public void sendSesCode(Long applicationId, Integer sesCode) {
+        dealFeignClient.code(applicationId, sesCode);
+    }
 
+    public void signDocuments(Long applicationId) {
+        dealFeignClient.sign(applicationId);
     }
 }

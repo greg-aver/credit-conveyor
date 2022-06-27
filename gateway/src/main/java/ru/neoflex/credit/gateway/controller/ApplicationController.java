@@ -8,6 +8,7 @@ import ru.neoflex.credit.deal.model.FinishRegistrationRequestDTO;
 import ru.neoflex.credit.deal.model.LoanApplicationRequestDTO;
 import ru.neoflex.credit.deal.model.LoanOfferDTO;
 import ru.neoflex.credit.gateway.service.abstracts.ApplicationService;
+import ru.neoflex.credit.gateway.service.abstracts.DealService;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ApplicationController implements ApplicationApi {
     private final ApplicationService applicationService;
+    private final DealService dealService;
     @Override
     public ResponseEntity<Void> applyOffer(LoanOfferDTO loanOfferDTO) {
         applicationService.applyOffer(loanOfferDTO);
@@ -34,7 +36,7 @@ public class ApplicationController implements ApplicationApi {
 
     @Override
     public ResponseEntity<Void> finishRegistration(Long applicationId, FinishRegistrationRequestDTO finishRegistrationRequestDTO) {
-        applicationService.finishRegistration(applicationId, finishRegistrationRequestDTO);
+        dealService.finishRegistration(applicationId, finishRegistrationRequestDTO);
         return  ResponseEntity.ok().build();
     }
 }
