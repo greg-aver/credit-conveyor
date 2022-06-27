@@ -145,7 +145,7 @@ paths:
         '400':
           description: Bad Request.
 
-  /deal/application/{applicationId}:
+  /deal/admin/application/{applicationId}:
     get:
       operationId: getApplicationById
       description: Get application by application id.
@@ -167,7 +167,7 @@ paths:
         '400':
           description: bad response.
 
-  /deal/application/all:
+  /deal/admin/application:
     get:
       operationId: getAllApplication
       description: Get all applications.
