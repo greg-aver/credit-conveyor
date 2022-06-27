@@ -1,0 +1,4 @@
+feign:
+  url:
+    deal: #
+    application: #
