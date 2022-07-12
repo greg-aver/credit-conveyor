@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://deal-ms-db:5432/credit-conveyor-db
+  liquibase:
+    url: jdbc:postgresql://deal-ms-db:5432/credit-conveyor-db
+  kafka:
+    producer:
+      bootstrap-servers: kafka:9092
+properties:
+  feign:
+    url: 'http://conveyor:8080/conveyor'

@@ -1,0 +1,3 @@
+properties:
+  feign:
+    url:  'http://deal:8080/deal'
