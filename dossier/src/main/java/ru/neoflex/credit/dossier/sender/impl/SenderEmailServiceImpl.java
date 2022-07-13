@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.neoflex.credit.deal.model.EmailMessage;
 import ru.neoflex.credit.dossier.sender.abstracts.SenderEmailService;
 
@@ -15,13 +15,13 @@ import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Map;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class SenderEmailServiceImpl implements SenderEmailService {
     private final JavaMailSender mailSender;
     @Value("${sender.from.email}")
-    private final String FROM_EMAIL;
+    private String FROM_EMAIL;
 
     @Override
     public void sendMessage(String toAddress, String subject, String text) {

@@ -5,10 +5,20 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="v1.0.01_add_client_sequence" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="client_id_seq"/>
+            </not>
+        </preConditions>
         <createSequence sequenceName="client_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
     <changeSet id="v1.0.01_add_table_client" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client"/>
+            </not>
+        </preConditions>
         <createTable tableName="client" remarks="Таблица клиентов">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -31,6 +41,12 @@
 
 
     <changeSet id="v1.0.01_add_client_pk" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="client"/>
+            <not>
+                <primaryKeyExists primaryKeyName="client_pk"/>
+            </not>
+        </preConditions>
         <addPrimaryKey columnNames="id" constraintName="client_pk" tableName="client"/>
     </changeSet>
 

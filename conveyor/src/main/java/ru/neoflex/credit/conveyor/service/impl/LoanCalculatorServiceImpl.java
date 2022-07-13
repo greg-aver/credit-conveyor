@@ -25,17 +25,17 @@ import static java.math.RoundingMode.CEILING;
 @RequiredArgsConstructor
 public class LoanCalculatorServiceImpl implements LoanCalculatorService {
     @Value("${properties.baseRate}")
-    private final String BASE_RATE;
+    private  String BASE_RATE;
     @Value("${properties.baseRate}")
     private BigDecimal CURRENT_RATE;
     @Value("${properties.baseInsurance}")
-    private final String BASE_INSURANCE;
+    private String BASE_INSURANCE;
     @Value("${properties.percentageInsurance}")
-    private final String PERCENTAGE_INSURANCE;
+    private String PERCENTAGE_INSURANCE;
     @Value("${properties.rateDiscountSalaryClient}")
-    private final String RATE_DISCOUNT_SALARY_CLIENT;
+    private String RATE_DISCOUNT_SALARY_CLIENT;
     @Value("${properties.rateDiscountInsuranceEnabled}")
-    private final String RATE_DISCOUNT_INSURANCE_ENABLED;
+    private String RATE_DISCOUNT_INSURANCE_ENABLED;
     private final ScoringService validator;
 
     @Override

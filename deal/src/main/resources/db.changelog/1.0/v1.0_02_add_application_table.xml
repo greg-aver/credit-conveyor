@@ -6,11 +6,21 @@
 
 
     <changeSet id="v1.0.02_add_application_sequence" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="application_id_seq"/>
+            </not>
+        </preConditions>
         <createSequence sequenceName="application_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
 
     <changeSet id="v1.0.02_add_table_application" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="application_id_seq"/>
+            </not>
+        </preConditions>
         <createTable tableName="application" remarks="Таблица заявок">
             <column name="id" type="INT">
                 <constraints nullable="false"/>
@@ -28,6 +38,11 @@
 
 
     <changeSet id="v1.0.02_add_application_pk" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="application_id_seq"/>
+            </not>
+        </preConditions>
         <addPrimaryKey columnNames="id" constraintName="application_pk" tableName="application"/>
     </changeSet>
 

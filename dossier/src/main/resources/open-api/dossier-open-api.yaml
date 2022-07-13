@@ -13,6 +13,30 @@ paths: {}
 
 components:
   schemas:
+    ApplicationStatusEnum:
+      type: string
+      enum:
+        - PREAPPROVAL
+        - APPROVED
+        - CC_DENIED
+        - CC_APPROVED
+        - PREPARE_DOCUMENTS
+        - DOCUMENT_CREATED
+        - CLIENT_DENIED
+        - DOCUMENT_SIGNED
+        - CREDIT_ISSUED
+      description: >
+        Types of status:
+          * Предодобрена
+          * Одобрена
+          * Отклонена Кредитным Конвейером
+          * Одобрена Кредитным Конвейером
+          * Подготовка документов
+          * Документы созданы
+          * Отклонено Клиентом
+          * Документы подписаны
+          * Кредит выдан      
+
     LoanApplicationRequestDTO:
       title: Loan Application Request
       type: object
@@ -502,7 +526,7 @@ components:
         credit:
           $ref: '#/components/schemas/CreditDTO'
         status:
-          $ref: '#/components/schemas/ApplicationStatus'
+          $ref: '#/components/schemas/ApplicationStatusEnum'
         creationDate:
           type: string
           format: date-time

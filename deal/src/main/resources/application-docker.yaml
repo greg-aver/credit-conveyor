@@ -8,4 +8,4 @@ spring:
       bootstrap-servers: kafka:9092
 properties:
   feign:
-    url: 'http://conveyor:8080/conveyor'
+    url: 'http://conveyor:8080/conveyor'v

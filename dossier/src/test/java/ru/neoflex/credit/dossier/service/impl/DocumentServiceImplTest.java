@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static ru.neoflex.credit.deal.model.ApplicationStatus.PREAPPROVAL;
+import static ru.neoflex.credit.deal.model.ApplicationStatusEnum.PREAPPROVAL;
 import static ru.neoflex.credit.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.neoflex.credit.deal.model.EmploymentDTO.EmploymentStatusEnum.SELF_EMPLOYED;
 
