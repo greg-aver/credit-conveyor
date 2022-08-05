@@ -10,7 +10,7 @@ import ru.neoflex.credit.deal.model.LoanOfferDTO;
 
 import java.util.List;
 
-@FeignClient(url = "feign.url.application", name = "application-feign-client")
+@FeignClient(url = "${feign.url.application}", name = "application-feign-client")
 public interface ApplicationFeignClient {
 
     @PostMapping

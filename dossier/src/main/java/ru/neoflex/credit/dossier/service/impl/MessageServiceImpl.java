@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.deal.model.ApplicationDTO;
 import ru.neoflex.credit.deal.model.EmailMessage;
 import ru.neoflex.credit.deal.model.MessageKafka;
 import ru.neoflex.credit.dossier.exception.IncorrectMessageThemeException;
@@ -20,34 +21,34 @@ public class MessageServiceImpl implements MessageService {
     private final DealFeignClient dealFeignClient;
 
     @Value("${email-message.send-document.subject}")
-    private final String SEND_DOCUMENT_SUBJECT;
+    private String SEND_DOCUMENT_SUBJECT;
     @Value("${email-message.send-document.text}")
-    private final String SEND_DOCUMENT_TEXT;
+    private String SEND_DOCUMENT_TEXT;
 
     @Value("${email-message.send-ses.subject}")
-    private final String SEND_SES_SUBJECT;
+    private String SEND_SES_SUBJECT;
     @Value("${email-message.send-ses.text}")
-    private final String SEND_SES_TEXT;
+    private String SEND_SES_TEXT;
 
     @Value("${email-message.create-document.subject}")
-    private final String CREATE_DOCUMENT_SUBJECT;
+    private String CREATE_DOCUMENT_SUBJECT;
     @Value("${email-message.create-document.text}")
-    private final String CREATE_DOCUMENT_TEXT;
+    private String CREATE_DOCUMENT_TEXT;
 
     @Value("${email-message.credit-issued.subject}")
-    private final String CREDIT_ISSUED_SUBJECT;
+    private String CREDIT_ISSUED_SUBJECT;
     @Value("${email-message.credit-issued.text}")
-    private final String CREDIT_ISSUED_TEXT;
+    private String CREDIT_ISSUED_TEXT;
 
     @Value("${email-message.finish-registration.subject}")
-    private final String FINISH_REGISTRATION_SUBJECT;
+    private String FINISH_REGISTRATION_SUBJECT;
     @Value("${email-message.finish-registration.text}")
-    private final String FINISH_REGISTRATION_TEXT;
+    private String FINISH_REGISTRATION_TEXT;
 
     @Value("${email-message.application-denied.subject}")
-    private final String APPLICATION_DENIED_SUBJECT;
+    private String APPLICATION_DENIED_SUBJECT;
     @Value("${email-message.application-denied.text}")
-    private final String APPLICATION_DENIED_TEXT;
+    private String APPLICATION_DENIED_TEXT;
 
     private final ObjectMapper objectMapper;
 
@@ -73,14 +74,14 @@ public class MessageServiceImpl implements MessageService {
     public EmailMessage kafkaMessageToEmailMessage(MessageKafka messageKafka) {
         String text = null;
         String subject = null;
-        Long applicationId = dealFeignClient
-                .getApplicationById(messageKafka.getApplicationId())
-                .getId();
+        Long applicationId = messageKafka.getApplicationId();
 
         switch(messageKafka.getTheme()) {
             case SEND_SES:
                 subject = SEND_SES_SUBJECT;
-                text = SEND_SES_TEXT.replace("{applicationId}", applicationId.toString());
+                ApplicationDTO applicationDTO = dealFeignClient.getApplicationById(applicationId);
+                text = SEND_SES_TEXT.replace("{applicationId}", applicationId.toString())
+                        .replace("{sesCode}", applicationDTO.getSesCode());
                 break;
             case CREDIT_ISSUED:
                 subject = CREDIT_ISSUED_SUBJECT;

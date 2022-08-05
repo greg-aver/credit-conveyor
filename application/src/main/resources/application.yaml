@@ -1,3 +1,4 @@
-properties:
-  feign:
-    url: 'http://localhost:8080/deal'
+feign:
+  url:
+    deal: 'http://localhost:8083/deal'
+

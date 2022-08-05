@@ -5,10 +5,20 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="v1.0.01_add_client_sequence" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="client_id_seq"/>
+            </not>
+        </preConditions>
         <createSequence sequenceName="client_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
     <changeSet id="v1.0.01_add_table_client" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client"/>
+            </not>
+        </preConditions>
         <createTable tableName="client" remarks="Таблица клиентов">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -19,18 +29,24 @@
             <column name="birth_date" type="date"/>
             <column name="email" type="VARCHAR(50)"/>
             <column name="gender" type="VARCHAR(50)"/>
-            <column name="marital_status" type="VARCHAR(50)"/>
+            <column name="martial_status" type="VARCHAR(50)"/>
             <column name="dependent_amount" type="INT"/>
             <column name="passport" type="JSONB"/>
             <column name="employment_dto" type="JSONB"/>
             <column name="account" type="TEXT"/>
             <column name="application_id" type="BIGINT"/>
-            <column name="credit_id" type="INT"/>
+            <column name="credit_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 
 
     <changeSet id="v1.0.01_add_client_pk" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="client"/>
+            <not>
+                <primaryKeyExists primaryKeyName="client_pk"/>
+            </not>
+        </preConditions>
         <addPrimaryKey columnNames="id" constraintName="client_pk" tableName="client"/>
     </changeSet>
 

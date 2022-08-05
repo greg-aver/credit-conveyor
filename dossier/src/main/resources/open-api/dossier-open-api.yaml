@@ -7,12 +7,36 @@ info:
     name: 'Григорий Аверьянов'
     url: 'https://github.com/greg-aver/credit-conveyor'
 servers:
-  - url: 'http://localhost:8080/'
+  - url: 'http://localhost:8084/'
     description: 'localhost'
 paths: {}
 
 components:
   schemas:
+    ApplicationStatusEnum:
+      type: string
+      enum:
+        - PREAPPROVAL
+        - APPROVED
+        - CC_DENIED
+        - CC_APPROVED
+        - PREPARE_DOCUMENTS
+        - DOCUMENT_CREATED
+        - CLIENT_DENIED
+        - DOCUMENT_SIGNED
+        - CREDIT_ISSUED
+      description: >
+        Types of status:
+          * Предодобрена
+          * Одобрена
+          * Отклонена Кредитным Конвейером
+          * Одобрена Кредитным Конвейером
+          * Подготовка документов
+          * Документы созданы
+          * Отклонено Клиентом
+          * Документы подписаны
+          * Кредит выдан      
+
     LoanApplicationRequestDTO:
       title: Loan Application Request
       type: object
@@ -55,23 +79,23 @@ components:
           pattern: '[A-Za-z\-]{2,30}'
         email:
           type: string
-          example: mdeev@neoflex.ru
+          example: konveierov@yandex.ru
           description: Requested the borrower's email.
           pattern: '[\w\.]{2,50}@[\w\.]{2,20}.[\w\.]{2,20}'
         birthdate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Date of birth.
         passportSeries:
           type: string
-          example: 0808
+          example: 1234
           pattern: '[0-9]{4}'
           description: Passport series.
         passportNumber:
           type: string
-          example: 010203
+          example: 123456
           pattern: '[0-9]{6}'
           description: Passport number.
 
@@ -196,23 +220,23 @@ components:
         birthdate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Date of Birth.
         passportSeries:
           type: string
-          example: 0808
+          example: 1234
           pattern: '[0-9]{4}'
           description: Passport series.
         passportNumber:
           type: string
-          example: 010203
+          example: 123456
           pattern: '[0-9]{6}'
           description: Passport number.
         passportIssueDate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Passport issue date.
         passportIssueBranch:
@@ -341,7 +365,7 @@ components:
               * Владелец бизнеса
         employerINN:
           type: string
-          example: 00085866
+          example: 1234567891
           description: INN
         salary:
           type: number
@@ -389,7 +413,7 @@ components:
         date:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Payment date.
         totalPayment:
@@ -420,7 +444,7 @@ components:
         address:
           type: string
           pattern: '[\w\.]*@\w{2,10}\.\w{2,5}'
-          example: mdeev@neoflex.ru
+          example: konveierov@yandex.ru
           description: Client's email address.
         theme:
           type: string
@@ -502,7 +526,7 @@ components:
         credit:
           $ref: '#/components/schemas/CreditDTO'
         status:
-          $ref: '#/components/schemas/ApplicationStatus'
+          $ref: '#/components/schemas/ApplicationStatusEnum'
         creationDate:
           type: string
           format: date-time
@@ -598,7 +622,7 @@ components:
         time:
           type: string
           format: date-time
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
         changeType:
           type: string
@@ -651,7 +675,7 @@ components:
         passportIssueDate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Passport issue date.
         passportIssueBranch:

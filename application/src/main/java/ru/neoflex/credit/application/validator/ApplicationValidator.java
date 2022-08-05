@@ -54,11 +54,11 @@ public class ApplicationValidator {
             reasonsRefusal.add("Invalid email format");
         }
 
-        if (!request.getPassportSeries().matches("\\d{4}")) {
+        if (!request.getPassportSeries().matches("[0-9]{4}")) {
             reasonsRefusal.add("Incorrect passport series");
         }
 
-        if (!request.getPassportNumber().matches("\\d{6}")) {
+        if (!request.getPassportNumber().matches("[0-9]{6}")) {
             reasonsRefusal.add("Incorrect passport number");
         }
 

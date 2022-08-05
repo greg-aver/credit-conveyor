@@ -8,7 +8,7 @@ import ru.neoflex.credit.deal.model.ScoringDataDTO;
 
 import java.util.List;
 
-@FeignClient(name = "deal-feign-client", url = "feign.url.deal")
+@FeignClient(name = "deal-feign-client", url = "${feign.url.deal}")
 public interface DealFeignClient {
 
     @GetMapping("/admin/application/{applicationId}")

@@ -5,19 +5,35 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="v1.0.04_add_client_foreignKey_to_application_table" author="Averianon_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="application"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="client_id_fk"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="client_id"
                                  baseTableName="application"
                                  constraintName="client_id_fk"
                                  referencedColumnNames="id"
-                                 referencedTableName="client"/>
+                                 referencedTableName="client"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"/>
     </changeSet>
 
     <changeSet id="v1.0.04_add_credit_foreignKey_to_application_table" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="application"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="credit_id_fk"/>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseColumnNames="credit_id"
                                  baseTableName="application"
                                  constraintName="credit_id_fk"
                                  referencedColumnNames="id"
-                                 referencedTableName="credit"/>
+                                 referencedTableName="credit"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -10,6 +10,7 @@ import ru.neoflex.credit.deal.repository.ClientRepository;
 import ru.neoflex.credit.deal.repository.CreditRepository;
 import ru.neoflex.credit.deal.service.abstracts.DealService;
 import ru.neoflex.credit.deal.service.abstracts.DossierService;
+import ru.neoflex.credit.deal.service.abstracts.MessageService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class DealServiceImpl implements DealService {
     private final ClientRepository clientRepository;
     private final CreditRepository creditRepository;
     private final ConveyorFeignClient conveyorFeignClient;
+    private final MessageService messageService;
 
     private final DossierService dossierService;
     @Override
@@ -91,7 +93,7 @@ public class DealServiceImpl implements DealService {
     }
 
     @Override
-    public void calculateCredit(Long applicationId, FinishRegistrationRequestDTO request) {
+    public void calculateCredit(Long applicationId, ScoringDataDTO scoringDataDTO) {
         log.info("Start calculate credit");
         Application application = applicationRepository.getReferenceById(applicationId);
         log.debug("application = {}", application);
@@ -102,19 +104,18 @@ public class DealServiceImpl implements DealService {
         LoanOfferDTO offer = application.appliedOffer();
         log.debug("offer = {}", offer);
 
-        ScoringDataDTO scoringDataDTO = new ScoringDataDTO()
+        scoringDataDTO
                 .amount(offer.getTotalAmount())
                 .term(offer.getTerm())
-                .lastName(client.getLastName())
                 .firstName(client.getFirstName())
                 .middleName(client.getMiddleName())
+                .lastName(client.getLastName())
                 .birthdate(client.getBirthDate())
                 .passportSeries(client.getPassport().getSeries())
                 .passportNumber(client.getPassport().getNumber())
                 .isInsuranceEnabled(offer.getIsInsuranceEnabled())
                 .isSalaryClient(offer.getIsSalaryClient());
-
-        log.debug("scoringDataDTO = {}", scoringDataDTO);
+        log.debug("full scoringDataDTO = {}", scoringDataDTO);
 
         CreditDTO creditDTO = conveyorFeignClient.scoring(scoringDataDTO).getBody();
         log.debug("creditDTO = {}", creditDTO);
@@ -142,9 +143,9 @@ public class DealServiceImpl implements DealService {
                 .issueBranch(scoringDataDTO.getPassportIssueBranch());
 
         clientRepository.save(client
-                .setGender(request.getGender().name())
+                .setGender(scoringDataDTO.getGender().name())
                 .setPassport(passportInformation)
-                .setMartialStatus(request.getMaritalStatus().name())
+                .setMartialStatus(scoringDataDTO.getMaritalStatus().name())
                 .setDependentAmount(scoringDataDTO.getDependentAmount())
                 .setEmploymentDTO(scoringDataDTO.getEmployment())
                 .setAccount(scoringDataDTO.getAccount())
@@ -156,6 +157,8 @@ public class DealServiceImpl implements DealService {
                 .status(CC_APPROVED)
                 .statusHistory(updatedStatusHistory)
                 .credit(credit));
+
+        messageService.createDocumentsRequest(applicationId);
     }
 
     private List<ApplicationStatusHistoryDTO> updateStatusHistory(

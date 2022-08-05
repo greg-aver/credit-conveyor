@@ -9,11 +9,181 @@ info:
 servers:
   - url: 'http://localhost:8080/'
     description: 'localhost'
-paths: {}
+paths:
+  /application:
+    post:
+      summary: Create loan application
+      operationId: createLoanApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanApplicationRequestDTO'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoanOfferDTO'
+        '400':
+          description: Bad Request
+
+  /application/{applicationId}/deny:
+    post:
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      summary: Deny application
+      operationId: denyLoanApplication
+      responses:
+        '200':
+          description: OK
+
+  /application/apply:
+    post:
+      summary: Apply offer
+      operationId: applyOffer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanOfferDTO'
+      responses:
+        '200':
+          description: OK
+
+  /application/registration/{applicationId}:
+    put:
+      summary: Finish registration
+      operationId: finishRegistration
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishRegistrationRequestDTO'
+      responses:
+        '200':
+          description: OK
+
+  /document/{applicationId}:
+    post:
+      summary: Create documents
+      operationId: createDocuments
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      responses:
+        '200':
+          description: OK
+
+  /document/{applicationId}/sign:
+    post:
+      summary: Sign documents
+      operationId: signDocuments
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      responses:
+        '200':
+          description: OK
+
+  /document/{applicationId}/sign/code:
+    post:
+      summary: Send SES code
+      operationId: sendSesCode
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SesCodeDTO'
+      responses:
+        '200':
+          description: OK
+
+  /admin/application/{applicationId}:
+    get:
+      summary: Get application by id
+      operationId: getApplicationById
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 700
+            description: Application id.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDTO'
+        '404':
+          description: Application not found
+
+  /admin/application:
+    get:
+      summary: Get all applications
+      operationId: getAllApplications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationDTO'
+        '404':
+          description: No applications present
 
 components:
   schemas:
-
     ApplicationStatusEnum:
       type: string
       enum:
@@ -80,23 +250,23 @@ components:
           pattern: '[A-Za-z\-]{2,30}'
         email:
           type: string
-          example: mdeev@neoflex.ru
+          example: konveierov@yandex.ru
           description: Requested the borrower's email.
           pattern: '[\w\.]{2,50}@[\w\.]{2,20}.[\w\.]{2,20}'
         birthdate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Date of birth.
         passportSeries:
           type: string
-          example: 0808
+          example: 1234
           pattern: '[0-9]{4}'
           description: Passport series.
         passportNumber:
           type: string
-          example: 010203
+          example: 123456
           pattern: '[0-9]{6}'
           description: Passport number.
 
@@ -221,23 +391,23 @@ components:
         birthdate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Date of Birth.
         passportSeries:
           type: string
-          example: 0808
+          example: 1234
           pattern: '[0-9]{4}'
           description: Passport series.
         passportNumber:
           type: string
-          example: 010203
+          example: 123456
           pattern: '[0-9]{6}'
           description: Passport number.
         passportIssueDate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Passport issue date.
         passportIssueBranch:
@@ -366,7 +536,8 @@ components:
               * Владелец бизнеса
         employerINN:
           type: string
-          example: 00085866
+          pattern: '\d{10}'
+          example: 1234567891
           description: INN
         salary:
           type: number
@@ -414,7 +585,7 @@ components:
         date:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Payment date.
         totalPayment:
@@ -445,7 +616,7 @@ components:
         address:
           type: string
           pattern: '[\w\.]*@\w{2,10}\.\w{2,5}'
-          example: mdeev@neoflex.ru
+          example: konveierov@yandex.ru
           description: Client's email address.
         theme:
           type: string
@@ -623,7 +794,7 @@ components:
         time:
           type: string
           format: date-time
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
         changeType:
           type: string
@@ -676,7 +847,7 @@ components:
         passportIssueDate:
           type: string
           format: date
-          example: 2021-05-25
+          example: 2000-05-25
           pattern: '[0-9]{4}-[0-9]{2}-[0-9]{2}'
           description: Passport issue date.
         passportIssueBranch:
@@ -689,6 +860,11 @@ components:
           type: string
           example: 003456
           description: Customer account.
+
+    SesCodeDTO:
+      type: integer
+      pattern: '[0-9]{4}'
+      example: 7777
 
 
 

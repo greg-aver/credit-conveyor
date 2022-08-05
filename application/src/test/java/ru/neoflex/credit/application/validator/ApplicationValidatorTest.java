@@ -26,9 +26,9 @@ public class ApplicationValidatorTest {
                 .amount(BigDecimal.valueOf(100000))
                 .term(12)
                 .birthdate(LocalDate.of(2001, 2, 3))
-                .email("mdeev@neoflex.ru")
+                .email("konveierov@yandex.ru")
                 .passportSeries("0102")
-                .passportNumber("010203");
+                .passportNumber("123456");
 
         validator.preScoring(request);
     }

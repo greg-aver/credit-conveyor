@@ -5,11 +5,21 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="v1.0.03_add_credit_sequence" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="credit_id_seq"/>
+            </not>
+        </preConditions>
         <createSequence sequenceName="credit_id_seq" incrementBy="1" minValue="1"/>
     </changeSet>
 
 
     <changeSet id="v1.0.03_add_table_credit" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="credit"/>
+            </not>
+        </preConditions>
         <createTable tableName="credit" remarks="Таблица кредитов">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -29,6 +39,12 @@
     </changeSet>
 
     <changeSet id="v1.0.03_add_credit_pk" author="Averianov_Gregory">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="credit"/>
+            <not>
+                <primaryKeyExists primaryKeyName="credit_pk"/>
+            </not>
+        </preConditions>
         <addPrimaryKey columnNames="id" constraintName="credit_pk" tableName="credit"/>
     </changeSet>
 

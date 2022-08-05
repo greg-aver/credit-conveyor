@@ -41,6 +41,9 @@ public class ScoringService {
                 currentRate = currentRate.add(BigDecimal.ONE);
                 log.debug("Client is self employed. Rate increased by 1");
                 break;
+            case EMPLOYED:
+                log.debug("Client is EMPLOYED");
+                break;
             case BUSINESS_OWNER:
                 currentRate = currentRate.add(BigDecimal.valueOf(3));
                 log.debug("Client is business owner. Rate increased by 3");

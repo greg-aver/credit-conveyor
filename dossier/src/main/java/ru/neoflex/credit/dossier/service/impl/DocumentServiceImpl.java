@@ -32,11 +32,11 @@ import static ru.neoflex.credit.dossier.model.DocumentType.*;
 public class DocumentServiceImpl implements DocumentService {
     private final DealFeignClient dealFeignClient;
     @Value("${document.text.contract}")
-    private final String CONTRACT_TEXT;
+    private String CONTRACT_TEXT;
     @Value("${document.text.credit-application}")
-    private final String CREDIT_APPLICATION_TEXT;
+    private String CREDIT_APPLICATION_TEXT;
     @Value("${document.text.loan-payment-schedule}")
-    private final String LOAN_PAYMENT_SCHEDULE_TEXT;
+    private String LOAN_PAYMENT_SCHEDULE_TEXT;
 
     @Override
     public File createDocument(DocumentType documentType, Map<String, String> data) {

@@ -1,30 +1,26 @@
 feign:
   url:
-    deal: "http://localhost:8080/deal"
-
-sender:
-  from:
-    email: credit@ept.ru
+    deal: "http://localhost:8083/deal"
 
 email-message:
   send-document:
     subject: "Your loan documents"
-    text: "Your loan documents are ready. Application {applicationId}. Send a request to sign documents"
+    text: "Your loan documents are ready. Application {applicationId}. Send a request to sign documents http://localhost:8080/swagger-ui/index.html#/document/signDocuments"
   send-ses:
     subject: "Your Simple Electronic Signature (SES)"
-    text: "Your SES code {sesCode} for your application #{applicationId}. \n Submit the code here: LINK"
+    text: "Your SES code {sesCode} for your application {applicationId}. Submit the code here: http://localhost:8080/swagger-ui/index.html#/document/sendSesCode"
   create-document:
     subject: "Create documents"
-    text: "Loan Application {applicationId}. Checks passed. Submit a request to create documents. LINK"
+    text: "Loan Application {applicationId}. Checks passed. Submit a request to create documents. http://localhost:8080/swagger-ui/index.html#/document/createDocuments"
   credit-issued:
     subject: "Credit issued!"
-    text: "The loan for your application #{applicationId} has been issued"
+    text: "The loan for your application {applicationId} has been issued"
   application-denied:
     subject: "Loan application rejected"
     text: "Application {applicationId} denied"
   finish-registration:
     subject: "Finish registration"
-    text: "Loan application {applicationId} approved! Follow this link https://LINK"
+    text: "Loan application {applicationId} approved! Follow this link http://localhost:8080/swagger-ui/index.html#/application/finishRegistration"
 
 spring:
   kafka:
@@ -34,6 +30,19 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: konveierov@yandex.ru
+    password: roxpgnnisohjbmgf
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
 
 topic:
   finish-registration: conveyor-finish-registration
@@ -45,41 +54,38 @@ topic:
 
 document:
   text:
-    contract: >
-    Credit contract ${creditId}
-    Full name - ${clientFullName}
-    Passport - ${clientPassport}
-    Credit -
-    amount - ${creditAmount}
-    term - ${creditTerm}
-    monthly payment - ${monthlyPayment}
-    rate - ${rate}
-    psk - ${psk}
-    credit date - ${creditDate}
-    additional services -
-    insurance - ${isInsuranceEnabled}
-    salary client - ${isSalaryClient}
-
-    loan-payment-schedule: >
-    Payment schedule for credit contract ${creditId}
-    Client's full name - ${clientFullName}
-    Payment schedule -
-    ${paymentSchedule}
-
-    credit-application: >
-      Credit application ${applicationId}
-        Client -
-          full name - ${clientFullName}
-          birthdate - ${clientBirthdate}
-          gender - ${clientGender}
-          passport - ${clientPassport}
-          email - ${clientEmail}
-          martial status - ${clientMartialStatus}
-          dependent amount - ${clientDependentAmount}
-          Employment -
-            employment status - ${employmentStatus}
-            employer INN - ${employerINN}
-            salary - ${employmentSalary}
-            employment position - ${employmentPosition}
-            work experience total - ${employmentWorkExperienceTotal}
-            work experience current - ${employmentWorkExperienceCurrent}
+    contract: |
+      Credit contract {creditId} from {creditDate}
+      Client's full name: {clientFullName}
+      Client's passport: {clientPassport}
+      Credit Info: 
+        amount: {creditAmount}
+        term: {creditTerm}
+        monthly payment: {monthlyPayment}
+        rate: {rate}
+        psk: {psk}
+        services:
+          insurance: {isInsuranceEnabled}
+          salary client: {isSalaryClient}
+    loan-payment-schedule: |
+      Payment schedule for credit contract {creditId} from {applicationCreationDate}
+      Client's full name: {clientFullName}
+      Payment schedule:
+        {paymentSchedule}
+    credit-application: |
+      Credit application {applicationId} from {applicationCreationDate}
+      Client info:
+        full name: {clientFullName}
+        birthdate: {clientBirthdate}
+        gender: {clientGender}
+        passport: {clientPassport}
+        email: {clientEmail}
+        martial status: {clientMartialStatus}
+        dependent amount: {clientDependentAmount}
+        Employment:
+          employment status: {employmentStatus}
+          employer INN (if present): {employerINN}
+          salary: {employmentSalary}
+          employment position: {employmentPosition}
+          total work experience: {employmentWorkExperienceTotal}
+          current work experience: {employmentWorkExperienceCurrent}

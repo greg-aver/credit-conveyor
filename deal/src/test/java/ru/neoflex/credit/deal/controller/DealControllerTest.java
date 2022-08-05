@@ -133,8 +133,8 @@ public class DealControllerTest {
                 .middleName("Alexey")
                 .lastName("Deev")
                 .birthdate(LocalDate.of(2000, 6, 4))
-                .passportSeries("0808")
-                .passportNumber("010203");
+                .passportSeries("123456")
+                .passportNumber("123456");
 
         LoanOfferDTO loanOffer1 = new LoanOfferDTO()
                 .applicationId(1L)

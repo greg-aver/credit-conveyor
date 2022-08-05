@@ -11,7 +11,7 @@ import ru.neoflex.credit.deal.model.ScoringDataDTO;
 
 import java.util.List;
 
-@FeignClient(name = "conveyor-feign", url = "${properties.feign.url}")
+@FeignClient(name = "conveyor-feign-client", url = "${feign.url.conveyor}")
 public interface ConveyorFeignClient {
     @PostMapping("/offers")
     ResponseEntity<List<LoanOfferDTO>> createOffers(@RequestBody LoanApplicationRequestDTO request);

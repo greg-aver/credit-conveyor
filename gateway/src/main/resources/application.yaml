@@ -1,4 +1,4 @@
 feign:
   url:
-    deal: #
-    application: #
+    deal: 'http://localhost:8083/deal'
+    application:  'http://localhost:8081/application'

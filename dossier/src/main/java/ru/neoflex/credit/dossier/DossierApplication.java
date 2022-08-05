@@ -12,4 +12,9 @@ public class DossierApplication {
 		SpringApplication.run(DossierApplication.class, args);
 	}
 
+/*	@Bean
+	public JavaMailSender javaMailSender() {
+		return new JavaMailSenderImpl();
+	}*/
+
 }
