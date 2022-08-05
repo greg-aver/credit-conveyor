@@ -63,7 +63,7 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "${topic.send-ses}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeSendSes(String messageJson) {
-        String stage = String.format("Send ses. Message = = %s", messageJson);
+        String stage = String.format("Send ses. Message: %s", messageJson);
         senderEmailService.sendMessage(
                 messageService.convertJsonToEmailMessage(messageJson, stage)
         );

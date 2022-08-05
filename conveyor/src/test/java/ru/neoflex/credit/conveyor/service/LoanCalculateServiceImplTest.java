@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import ru.neoflex.credit.conveyor.model.CreditDTO;
@@ -113,7 +111,7 @@ public class LoanCalculateServiceImplTest {
     public void calculateCredit() {
         EmploymentDTO employment = new EmploymentDTO()
                 .employmentStatus(EmploymentDTO.EmploymentStatusEnum.SELF_EMPLOYED)
-                .employerINN("00085866")
+                .employerINN("1234567891")
                 .salary(new BigDecimal("60000"))
                 .position(EmploymentDTO.PositionEnum.MID_MANAGER)
                 .workExperienceTotal(40)
@@ -127,8 +125,8 @@ public class LoanCalculateServiceImplTest {
                 .lastName("Deev")
                 .gender(ScoringDataDTO.GenderEnum.MALE)
                 .birthdate(LocalDate.of(2000, 6, 4))
-                .passportSeries("0808")
-                .passportNumber("010203")
+                .passportSeries("123456")
+                .passportNumber("123456")
                 .passportIssueDate(LocalDate.of(2015, 6, 4))
                 .passportIssueBranch("Hospitable department of Dagestan")
                 .maritalStatus(ScoringDataDTO.MaritalStatusEnum.SINGLE)

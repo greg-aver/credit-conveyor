@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.neoflex.credit.deal.model.Application;
 import ru.neoflex.credit.deal.model.ApplicationDTO;
+@Mapper(componentModel = "spring")
 
-@Mapper
 public abstract class ApplicationMapper {
     @Autowired
     private CreditMapper creditMapper;
@@ -18,7 +18,7 @@ public abstract class ApplicationMapper {
                 .credit(creditMapper.toDto(application.credit()))
                 .id(application.id())
                 .creationDate(application.creationDate().atStartOfDay())
-                .sesCode(application.sesCode().toString())
+//                .sesCode(application.sesCode().toString())
                 .status(application.status())
                 .statusHistory(application.statusHistory());
     }

@@ -39,6 +39,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationDTO updateApplicationStatusById(Long applicationId, String applicationStatusNew) {
+        applicationStatusNew = applicationStatusNew.replaceAll("\"", "");
         ApplicationStatusEnum status = ApplicationStatusEnum.valueOf(applicationStatusNew);
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ApplicationNotFoundException(

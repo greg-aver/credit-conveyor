@@ -20,17 +20,17 @@ public class DossierServiceImpl implements DossierService {
     private final ObjectMapper objectMapper;
 
     @Value("${topic.finish-registration}")
-    private final String FINISH_REGISTRATION_TOPIC;
+    private String FINISH_REGISTRATION_TOPIC;
     @Value("${topic.create-documents}")
-    private final String CREATE_DOCUMENTS_TOPIC;
+    private String CREATE_DOCUMENTS_TOPIC;
     @Value("${topic.credit-issued}")
-    private final String CREDIT_ISSUED_TOPIC;
+    private String CREDIT_ISSUED_TOPIC;
     @Value("${topic.application-denied}")
-    private final String APPLICATION_DENIED_TOPIC;
+    private String APPLICATION_DENIED_TOPIC;
     @Value("${topic.send-ses}")
-    private final String SEND_SES_TOPIC;
+    private String SEND_SES_TOPIC;
     @Value("${topic.send-documents}")
-    private final String SEND_DOCUMENTS_TOPIC;
+    private String SEND_DOCUMENTS_TOPIC;
 
 
     @Override

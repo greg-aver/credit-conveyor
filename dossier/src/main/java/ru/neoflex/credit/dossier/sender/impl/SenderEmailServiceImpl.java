@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 public class SenderEmailServiceImpl implements SenderEmailService {
     private final JavaMailSender mailSender;
-    @Value("${sender.from.email}")
+    @Value("${spring.mail.username}")
     private String FROM_EMAIL;
 
     @Override
@@ -59,6 +59,10 @@ public class SenderEmailServiceImpl implements SenderEmailService {
             for (Map.Entry<String, File> entry : attachmentFiles.entrySet()) {
                 messageHelper.addAttachment(entry.getKey(), entry.getValue());
             }
+
+            mailSender.send(mimeMessage);
+            log.info("Send email {}", mimeMessage);
+
         } catch (MessagingException e) {
             log.error("Having trouble attaching files: {}", e.getMessage());
             throw new RuntimeException(e);

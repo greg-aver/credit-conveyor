@@ -17,7 +17,7 @@
     <changeSet id="v1.0.03_add_table_credit" author="Averianov_Gregory">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sequenceExists sequenceName="credit_id_seq"/>
+                <sequenceExists sequenceName="credit"/>
             </not>
         </preConditions>
         <createTable tableName="credit" remarks="Таблица кредитов">
@@ -40,8 +40,9 @@
 
     <changeSet id="v1.0.03_add_credit_pk" author="Averianov_Gregory">
         <preConditions onFail="MARK_RAN">
+            <tableExists tableName="credit"/>
             <not>
-                <sequenceExists sequenceName="credit_id_seq"/>
+                <primaryKeyExists primaryKeyName="credit_pk"/>
             </not>
         </preConditions>
         <addPrimaryKey columnNames="id" constraintName="credit_pk" tableName="credit"/>

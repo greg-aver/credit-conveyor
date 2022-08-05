@@ -110,7 +110,7 @@ public class DocumentServiceImplTest {
 
         EmploymentDTO employmentDTO = new EmploymentDTO()
                 .employmentStatus(SELF_EMPLOYED)
-                .employerINN("00085866")
+                .employerINN("1234567891")
                 .salary(new BigDecimal("60000"))
                 .position(EmploymentDTO.PositionEnum.MID_MANAGER)
                 .workExperienceTotal(40)
@@ -123,8 +123,8 @@ public class DocumentServiceImplTest {
                 .middleName("Alexey")
                 .lastName("Deev")
                 .birthdate(LocalDate.of(2000, 6, 4))
-                .passportSeries("0808")
-                .passportNumber("010203");
+                .passportSeries("123456")
+                .passportNumber("123456");
 
         ClientDTO clientDTO = new ClientDTO()
                 .lastName(request.getLastName())

@@ -89,8 +89,7 @@ public class LoanCalculatorServiceImpl implements LoanCalculatorService {
         log.info("Start calculate monthly payment");
         log.info("totalAmount = {}, term = {}, rate = {}", totalAmount, term, rate);
 
-        BigDecimal rateMonthly = rate.divide(BigDecimal.valueOf(12), 10, CEILING)
-                .divide(BigDecimal.valueOf(100), 10, CEILING);
+        BigDecimal rateMonthly = rate.divide(BigDecimal.valueOf(12 * 100), 10, CEILING);
         log.debug("rateMonthly = {}", rateMonthly);
 
         //  intermediateNumber = (1 + i)^n

@@ -15,7 +15,9 @@
                                  baseTableName="client"
                                  constraintName="application_id_fk"
                                  referencedColumnNames="id"
-                                 referencedTableName="application"/>
+                                 referencedTableName="application"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"/>
     </changeSet>
 
     <changeSet id="v1.0.06_add_credit_foreignKey_to_client_table" author="Averianov_Gregory">
@@ -29,6 +31,8 @@
                                  baseTableName="client"
                                  constraintName="credit_id_fk"
                                  referencedColumnNames="id"
-                                 referencedTableName="credit"/>
+                                 referencedTableName="credit"
+                                 onDelete="NO ACTION"
+                                 onUpdate="NO ACTION"/>
     </changeSet>
 </databaseChangeLog>

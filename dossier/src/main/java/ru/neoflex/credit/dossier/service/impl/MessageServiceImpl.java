@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.neoflex.credit.deal.model.ApplicationDTO;
 import ru.neoflex.credit.deal.model.EmailMessage;
 import ru.neoflex.credit.deal.model.MessageKafka;
 import ru.neoflex.credit.dossier.exception.IncorrectMessageThemeException;
@@ -73,14 +74,14 @@ public class MessageServiceImpl implements MessageService {
     public EmailMessage kafkaMessageToEmailMessage(MessageKafka messageKafka) {
         String text = null;
         String subject = null;
-        Long applicationId = dealFeignClient
-                .getApplicationById(messageKafka.getApplicationId())
-                .getId();
+        Long applicationId = messageKafka.getApplicationId();
 
         switch(messageKafka.getTheme()) {
             case SEND_SES:
                 subject = SEND_SES_SUBJECT;
-                text = SEND_SES_TEXT.replace("{applicationId}", applicationId.toString());
+                ApplicationDTO applicationDTO = dealFeignClient.getApplicationById(applicationId);
+                text = SEND_SES_TEXT.replace("{applicationId}", applicationId.toString())
+                        .replace("{sesCode}", applicationDTO.getSesCode());
                 break;
             case CREDIT_ISSUED:
                 subject = CREDIT_ISSUED_SUBJECT;

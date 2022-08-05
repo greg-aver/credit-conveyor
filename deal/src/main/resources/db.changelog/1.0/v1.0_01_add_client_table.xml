@@ -29,13 +29,13 @@
             <column name="birth_date" type="date"/>
             <column name="email" type="VARCHAR(50)"/>
             <column name="gender" type="VARCHAR(50)"/>
-            <column name="marital_status" type="VARCHAR(50)"/>
+            <column name="martial_status" type="VARCHAR(50)"/>
             <column name="dependent_amount" type="INT"/>
             <column name="passport" type="JSONB"/>
             <column name="employment_dto" type="JSONB"/>
             <column name="account" type="TEXT"/>
             <column name="application_id" type="BIGINT"/>
-            <column name="credit_id" type="INT"/>
+            <column name="credit_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 

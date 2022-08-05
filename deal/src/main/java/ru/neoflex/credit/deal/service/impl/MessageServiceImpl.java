@@ -2,6 +2,7 @@ package ru.neoflex.credit.deal.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.neoflex.credit.deal.exception.InappropriateStatusException;
 import ru.neoflex.credit.deal.exception.SesDifferentException;
 import ru.neoflex.credit.deal.model.*;
@@ -21,21 +22,24 @@ import static ru.neoflex.credit.deal.model.CreditStatus.ISSUED;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class MessageServiceImpl implements MessageService {
     private final ApplicationRepository applicationRepository;
     private final CreditRepository creditRepository;
     private final DossierService dossierService;
     @Override
     public void send(Long applicationId) {
-        Application application = validApplication(applicationId, CC_APPROVED);
-        application.status(PREPARE_DOCUMENTS);
+/*        Application application = validApplication(applicationId, CC_APPROVED);
+        application.status(PREPARE_DOCUMENTS);*/
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new EntityNotFoundException(String.format("Application with applicationID = %d not exists", applicationId)));
         application.statusHistory().add(
                 new ApplicationStatusHistoryDTO()
                         .time(LocalDateTime.now())
                         .changeType(AUTOMATIC)
                         .status(PREPARE_DOCUMENTS)
         );
-        Application applicationDB = applicationRepository.save(application);
+        Application applicationDB = applicationRepository.save(application
+                .status(PREPARE_DOCUMENTS));
         log.info("New application = {}", applicationDB);
         dossierService.send(new EmailMessage()
                 .theme(EmailMessage.ThemeEnum.SEND_DOCUMENTS)
@@ -43,6 +47,17 @@ public class MessageServiceImpl implements MessageService {
                 .applicationId(applicationId));
     }
 
+    @Override
+    public void createDocumentsRequest(Long applicationId) {
+        Application application = validApplication(applicationId, CC_APPROVED);
+        log.info("Sending create document request for application {}",
+                application);
+
+        dossierService.send(new EmailMessage()
+                .theme(EmailMessage.ThemeEnum.CREATE_DOCUMENTS)
+                .applicationId(applicationId)
+                .address(application.client().getEmail()));
+    }
     private Application validApplication(Long applicationId, ApplicationStatusEnum statusExpected) {
         Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new EntityNotFoundException(String.format("Application with applicationID = %d not exists", applicationId)));
         ApplicationStatusEnum applicationStatus = application.status();
@@ -98,6 +113,7 @@ public class MessageServiceImpl implements MessageService {
 
         issueCredit(applicationId);
     }
+
 
     private void issueCredit(Long applicationId) {
         Application application = validApplication(applicationId);

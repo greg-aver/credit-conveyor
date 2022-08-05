@@ -9,11 +9,11 @@ import ru.neoflex.credit.deal.model.LoanOfferDTO;
 
 import java.util.List;
 
-@FeignClient(name = "deal-feign-client", url = "${properties.feign.url}")
+@FeignClient(name = "deal-feign-client", url = "${feign.url.deal}")
 public interface DealFeignClient {
-    @PostMapping("/deal/application")
+    @PostMapping("/application")
     ResponseEntity<List<LoanOfferDTO>> createApplication(@RequestBody LoanApplicationRequestDTO request);
 
-    @PostMapping("/deal/offer")
+    @PostMapping("/offer")
     ResponseEntity<Void> offer(@RequestBody LoanOfferDTO loanOfferDTO);
 }

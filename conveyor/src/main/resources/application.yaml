@@ -1,5 +1,3 @@
-server:
-    port: 8080
 properties:
   baseRate: 11
   baseInsurance: 10000

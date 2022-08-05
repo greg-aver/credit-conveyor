@@ -37,7 +37,7 @@ public class MessageServiceImplTest {
     @Before
     public void setUp() {
         messageKafka = new MessageKafka()
-                .address("mdeev@neoflex.ru")
+                .address("konveierov@yandex.ru")
                 .applicationId(300L)
                 .theme(FINISH_REGISTRATION);
     }
@@ -45,7 +45,7 @@ public class MessageServiceImplTest {
 
     @Test
     public void getMessageFromJson() throws JsonProcessingException {
-        String messageJson = "{\"address\": \"mdeev@neoflex.ru\",\n" +
+        String messageJson = "{\"address\": \"konveierov@yandex.ru\",\n" +
                 "  \"applicationId\": 300,\n" +
                 "  \"theme\": \"FINISH_REGISTRATION\"\n" +
                 "}";
